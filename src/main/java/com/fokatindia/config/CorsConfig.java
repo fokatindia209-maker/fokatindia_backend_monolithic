@@ -21,7 +21,11 @@ public class CorsConfig {
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
                 "https://fokatindia-admin-1d8cf.web.app",
-                "https://fokatindia-user-11e15.web.app"
+                "https://fokatindia-user-11e15.web.app",
+                // CUSTOM DOMAINS
+                "https://admin.fokatindia.com",
+                "https://fokatindia.com",
+                "https://www.fokatindia.com"
         ));
 
         config.setAllowedHeaders(Arrays.asList("*"));
