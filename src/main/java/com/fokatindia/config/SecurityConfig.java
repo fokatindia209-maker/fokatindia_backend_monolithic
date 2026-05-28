@@ -1,4 +1,4 @@
-package com.fokatindia.user_service.config;
+package com.fokatindia.config;
 
 import com.fokatindia.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
