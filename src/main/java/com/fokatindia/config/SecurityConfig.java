@@ -26,7 +26,8 @@ public class SecurityConfig {
         return http
 
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-
+                // ENABLE CORS
+                .cors(cors -> {})
                 .authorizeExchange(exchange -> exchange
 
                         .pathMatchers(
