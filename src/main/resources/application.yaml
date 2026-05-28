@@ -1,5 +1,30 @@
+server:
+  port: 8001
+
 spring:
   application:
     name: fokatindia
+
+  main:
+    web-application-type: reactive
+
   profiles:
-    active: dev
+    active: dev   # default local profile (Railway will override)
+
+  jackson:
+    default-property-inclusion: non_null
+
+jwt:
+  secret: fokatindia_super_secure_key_123456
+  expiration: 86400000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+#spring:
+#  application:
+#    name: fokatindia
+#  profiles:
+#    active: dev
