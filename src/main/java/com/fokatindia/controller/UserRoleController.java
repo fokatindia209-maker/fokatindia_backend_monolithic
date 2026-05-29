@@ -170,29 +170,3 @@ public class UserRoleController {
                 );
     }
 }
-//package com.fokatindia.user_service.controller;
-//
-//import com.fokatindia.user_service.dto.ApiResponse;
-//import com.fokatindia.user_service.dto.UserRoleRequest;
-//import com.fokatindia.user_service.dto.UserRoleResponse;
-//import com.fokatindia.user_service.service.UserRoleService;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//import reactor.core.publisher.Mono;
-//
-//@RestController
-//@RequestMapping("/restful/v1/api/user-roles")
-//public class UserRoleController {
-//
-//    private final UserRoleService userRoleService;
-//
-//    public UserRoleController(UserRoleService userRoleService) { this.userRoleService = userRoleService; }
-//
-//    @PostMapping
-//    public Mono<ApiResponse<UserRoleResponse>> assignRole(@RequestBody UserRoleRequest ur) {
-//        return userRoleService.assignRole(ur)
-//                .map(r -> new ApiResponse<>("success", 200, "Role assigned to user", r));
-//    }
-//}

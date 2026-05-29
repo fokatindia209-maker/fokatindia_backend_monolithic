@@ -34,7 +34,7 @@ public class SecurityConfig {
                                 "/restful/v1/api/users/**",
                                 "/restful/v1/api/role-permissions",
                                 "/restful/v1/api/permissions/**",
-                                "/restful/v1/api/user-roles",
+                                "/restful/v1/api/user-roles/**",
                                 "/restful/v1/api/roles/**",
                                 "/internal/**",
                                 "/restful/v1/api/users/admin/vendors",
