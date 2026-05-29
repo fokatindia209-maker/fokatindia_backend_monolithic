@@ -22,3 +22,10 @@ management:
   endpoint:
     health:
       show-details: always
+
+
+
+cloudinary:
+  cloud-name: dgcjheuk7
+  api-key: 766174979751285
+  api-secret: lBRi4h7q8KG58Ntx-jdCni1SxLc
