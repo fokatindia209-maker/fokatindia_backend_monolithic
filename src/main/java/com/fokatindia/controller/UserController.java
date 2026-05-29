@@ -60,7 +60,7 @@ public class UserController {
 
 
     @PreAuthorize("hasAuthority('VIEW_ALL_USER')")
-    @GetMapping("")
+    @GetMapping
     public Mono<ApiResponse<List<UserResponse>>> getAllUsers() {
         return userService.getAllUsers()
                 .collectList()
@@ -71,21 +71,21 @@ public class UserController {
 
 
     @PreAuthorize("hasAuthority('PROFILE_UPDATE')")
-    @PutMapping("/{id}")
-    public Mono<ApiResponse<UserResponse>> updateProfile(@PathVariable Long id, @RequestBody RegisterRequest request) {
-        return userService.updateProfile(id, request)
+    @PutMapping("/{userId}")
+    public Mono<ApiResponse<UserResponse>> updateProfile(@PathVariable Long userId, @RequestBody RegisterRequest request) {
+        return userService.updateProfile(userId, request)
                 .map(user -> new ApiResponse<>("success", 200, "Profile updated", user));
     }
     @PreAuthorize("hasAuthority('USER_MANAGE')")
-    @DeleteMapping("/{id}")
-    public Mono<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
-        return userService.deleteUser(id)
+    @DeleteMapping("/{userId}")
+    public Mono<ApiResponse<Void>> deleteUser(@PathVariable Long userId) {
+        return userService.deleteUser(userId)
                 .thenReturn(new ApiResponse<>("success", 200, "User deleted", null));
     }
 
-    @PutMapping("/{id}/deactivate")
-    public Mono<ApiResponse<UserResponse>> deactivate(@PathVariable Long id) {
-        return userService.deactivateUser(id)
+    @PutMapping("/{userId}/deactivate")
+    public Mono<ApiResponse<UserResponse>> deactivate(@PathVariable Long userId) {
+        return userService.deactivateUser(userId)
                 .map(res -> new ApiResponse<>(
                         "success",
                         200,
