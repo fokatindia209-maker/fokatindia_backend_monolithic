@@ -31,9 +31,7 @@ public class SecurityConfig {
                 .authorizeExchange(exchange -> exchange
 
                         .pathMatchers(
-                                "/restful/v1/api/users/register",
-                                "/restful/v1/api/users/login",
-                                "/restful/v1/api/users/forgot-password",
+                                "/restful/v1/api/users/**",
                                 "/restful/v1/api/role-permissions",
                                 "/restful/v1/api/permissions/**",
                                 "/restful/v1/api/user-roles",
