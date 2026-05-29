@@ -6,50 +6,19 @@ spring:
 
   sql:
     init:
-      mode: always
+      mode: never
+
 
 logging:
   level:
     org.springframework.security: DEBUG
     org.springframework.r2dbc: DEBUG
-#server:
-#  port: 8001
-#
-#spring:
-#  application:
-#    name: fokatindia
-#
-#  main:
-#    web-application-type: reactive
-#
-#  r2dbc:
-#    url: r2dbc:postgresql://localhost:5432/fokatIndiaDB
-#    username: postgres
-#    password: root
-#
-#  sql:
-#    init:
-#      mode: always
-#
-#  jackson:
-#    default-property-inclusion: non_null
-#
-#logging:
-#  level:
-#    org.springframework.security: DEBUG
-#    org.springframework.r2dbc: DEBUG
-#
-#jwt:
-#  secret: fokatindia_super_secure_key_123456
-#  expiration: 86400000
-#
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: "*"
-#
-#cloudinary:
-#  cloud-name: dgcjheuk7
-#  api-key: 766174979751285
-#  api-secret: lBRi4h7q8KG58Ntx-jdCni1SxLc
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always

@@ -1,5 +1,6 @@
 server:
-  port: 8001
+  address: 0.0.0.0
+  port: ${PORT:8080}
 
 spring:
   application:
@@ -9,22 +10,25 @@ spring:
     web-application-type: reactive
 
   profiles:
-    active: dev   # default local profile (Railway will override)
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   jackson:
     default-property-inclusion: non_null
 
 jwt:
-  secret: fokatindia_super_secure_key_123456
+  secret: ${JWT_SECRET:fokatindia_super_secure_key_123456}
   expiration: 86400000
+
+logging:
+  level:
+    org.springframework.security: INFO
+    org.springframework.r2dbc: INFO
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
-#spring:
-#  application:
-#    name: fokatindia
-#  profiles:
-#    active: dev
+        include: health
+  endpoint:
+    health:
+      show-details: always

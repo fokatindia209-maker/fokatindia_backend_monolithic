@@ -12,3 +12,12 @@ logging:
   level:
     org.springframework.security: INFO
     org.springframework.r2dbc: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
