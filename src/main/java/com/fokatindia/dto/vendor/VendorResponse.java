@@ -25,4 +25,14 @@ public class VendorResponse {
     private String kycStatus;
 
     private Double rating;
+
+
+    private String name;
+
+    private String email;
+
+    private String phone;
+
+    private String status;
+
 }
