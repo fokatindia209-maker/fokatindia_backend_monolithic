@@ -35,4 +35,6 @@ public class VendorResponse {
 
     private String status;
 
+    public VendorResponse(Long vendorId, Long userId, String businessName, String gstNumber, String address, String city, String serviceArea, String kycStatus, Double rating) {
+    }
 }
