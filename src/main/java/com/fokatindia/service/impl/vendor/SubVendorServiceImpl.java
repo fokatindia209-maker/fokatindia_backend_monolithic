@@ -5,6 +5,7 @@ import com.fokatindia.dto.vendor.SubVendorRequest;
 import com.fokatindia.dto.vendor.SubVendorResponse;
 import com.fokatindia.entity.vendor.SubVendor;
 import com.fokatindia.exception.ResourceNotFoundException;
+import com.fokatindia.repository.UserRepository;
 import com.fokatindia.repository.vendor.SubVendorRepository;
 import com.fokatindia.repository.vendor.VendorRepository;
 import com.fokatindia.service.vendor.SubVendorService;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 public class SubVendorServiceImpl implements SubVendorService {
     private final SubVendorRepository subVendorRepository;
     private final VendorRepository vendorRepository;
-
+    private  final UserRepository userRepository;
     @Override
     public Mono<SubVendorResponse> addSubVendor(
             SubVendorRequest request
@@ -56,7 +57,7 @@ public class SubVendorServiceImpl implements SubVendorService {
                     );
 
                     return subVendorRepository.save(subVendor)
-                            .map(this::mapToResponse);
+                            .flatMap(this::mapToResponse);
                 });
     }
 
@@ -69,7 +70,7 @@ public class SubVendorServiceImpl implements SubVendorService {
                         vendorId
                 )
 
-                .map(this::mapToResponse);
+                .flatMap(this::mapToResponse);
     }
 
     @Override
@@ -136,78 +137,55 @@ public class SubVendorServiceImpl implements SubVendorService {
                                     subVendor
                             )
 
-                            .map(this::mapToResponse);
+                            .flatMap(this::mapToResponse);
                 });
     }
 
     @Override
     public Flux<SubVendorResponse> getAllSubVendors() {
         return subVendorRepository.findAll()
-                .map(this::mapToResponse);
-    }
-
-    // =====================================================
-    // ENTITY -> RESPONSE
-    // =====================================================
-
-    private SubVendorResponse mapToResponse(
-            SubVendor subVendor
-    ) {
-
-        return  new  SubVendorResponse(
-                subVendor.getUserId(),
-                subVendor.getSubVendorId(),
-                subVendor.getVendorId(),
-                subVendor.getSpecialization(),
-                subVendor.getExperienceYears(),
-                subVendor.getAvailabilityStatus(),
-                subVendor.getRating(),
-                subVendor.getCreatedAt()
-        );
+                .flatMap(this::mapToResponse);
     }
 
 
+    // =====================================================
+    // MAPPER (SubVendor + User)
+    // =====================================================
+    private Mono<SubVendorResponse> mapToResponse(SubVendor subVendor) {
 
+        return userRepository.findById(subVendor.getUserId())
+                .map(user -> new SubVendorResponse(
+                        subVendor.getUserId(),
+                        subVendor.getSubVendorId(),
+                        subVendor.getVendorId(),
+                        subVendor.getSpecialization(),
+                        subVendor.getExperienceYears(),
+                        subVendor.getAvailabilityStatus(),
+                        subVendor.getRating(),
+                        subVendor.getCreatedAt(),
 
-//    @Override
-//    public Mono<DocumentResponse> uploadMyDocument(String documentType, FilePart file) {
-//        return AuthUtils.getSubVendorId()
-//                .flatMap(subVendorRepo::findById)
-//                .switchIfEmpty(Mono.error(new RuntimeException("SubVendor not found")))
-//                .flatMap(subVendor ->
-//                     cloudinaryService.upload(file)
-//                      .flatMap(url -> {
-//
-//                    Document d = new Document();
-//                    d.setVendorId(subVendor.getVendorId());
-//                    d.setDocumentType(documentType);
-//                    d.setDocumentUrl(url);
-//                    d.setStatus("PENDING");
-//                    d.setUploadedAt(LocalDateTime.now());
-//                    return documentRepo.save(d);
-//                }))
-//                .map(doc -> new DocumentResponse(
-//                        doc.getDocumentId(),
-//                        doc.getVendorId(),
-//                        doc.getDocumentType(),
-//                        doc.getDocumentUrl(),
-//                        doc.getStatus()
-//                ));
-//    }
-//
-//
-//    @Override
-//    public Flux<DocumentResponse> getMyDocuments() {
-//        return AuthUtils.getSubVendorId()
-//                .flatMapMany(documentRepo::findByVendorId   // or findBySubVendorId if you store it
-//                )
-//                .map(doc -> new DocumentResponse(
-//                        doc.getDocumentId(),
-//                        doc.getVendorId(),
-//                        doc.getDocumentType(),
-//                        doc.getDocumentUrl(),
-//                        doc.getStatus()
-//                ));
-//    }
+                        user.getName(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getStatus()
+                ))
+                .switchIfEmpty(
+                        Mono.just(new SubVendorResponse(
+                                subVendor.getUserId(),
+                                subVendor.getSubVendorId(),
+                                subVendor.getVendorId(),
+                                subVendor.getSpecialization(),
+                                subVendor.getExperienceYears(),
+                                subVendor.getAvailabilityStatus(),
+                                subVendor.getRating(),
+                                subVendor.getCreatedAt(),
+
+                                null,
+                                null,
+                                null,
+                                null
+                        ))
+                );
+    }
 
 }

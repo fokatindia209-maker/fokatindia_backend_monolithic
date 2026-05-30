@@ -1,8 +1,10 @@
 package com.fokatindia.service.impl.vendor;
 
 
+import com.fokatindia.dto.vendor.SubVendorResponse;
 import com.fokatindia.dto.vendor.VendorRequest;
 import com.fokatindia.dto.vendor.VendorResponse;
+import com.fokatindia.entity.vendor.SubVendor;
 import com.fokatindia.entity.vendor.Vendor;
 import com.fokatindia.exception.ResourceNotFoundException;
 import com.fokatindia.repository.UserRepository;
@@ -20,7 +22,8 @@ import java.time.LocalDateTime;
 public class VendorServiceImpl implements VendorService {
 
     private final VendorRepository vendorRepo;
-    private final UserRepository userRepo;
+    private final UserRepository userRepository;
+
 
     // =====================================================
     // VENDOR
@@ -64,7 +67,7 @@ public class VendorServiceImpl implements VendorService {
 
         return vendorRepo.save(vendor)
 
-                .map(this::mapVendorResponse);
+                .flatMap(this::mapToResponse);
     }
     @Override
     public Mono<VendorResponse> getVendor(Long id) {
@@ -79,7 +82,7 @@ public class VendorServiceImpl implements VendorService {
                         )
                 )
 
-                .map(this::mapVendorResponse);
+                .flatMap(this::mapToResponse);
     }
 
 
@@ -98,13 +101,13 @@ public class VendorServiceImpl implements VendorService {
                         )
                 )
 
-                .map(this::mapVendorResponse);
+                .flatMap(this::mapToResponse);
     }
 
     @Override
     public Flux<VendorResponse> getAllVendors() {
         return vendorRepo.findAll()
-                .map(this::mapVendorResponse);
+                .flatMap(this::mapToResponse);
     }
 
 
@@ -157,7 +160,7 @@ public class VendorServiceImpl implements VendorService {
                     return vendorRepo.save(vendor);
                 })
 
-                .map(this::mapVendorResponse);
+                .flatMap(this::mapToResponse);
     }
 
 
@@ -165,21 +168,46 @@ public class VendorServiceImpl implements VendorService {
     // MAPPERS
     // =====================================================
 
-    private VendorResponse mapVendorResponse(
-            Vendor vendor
-    ) {
 
-        return new VendorResponse(
-                vendor.getVendorId(),
-                vendor.getUserId(),
-                vendor.getBusinessName(),
-                vendor.getGstNumber(),
-                vendor.getAddress(),
-                vendor.getCity(),
-                vendor.getServiceArea(),
-                vendor.getKycStatus(),
-                vendor.getRating()
-        );
+    // =====================================================
+    // MAPPER (SubVendor + User)
+    // =====================================================
+    private Mono<VendorResponse> mapToResponse(Vendor vendor) {
+
+        return userRepository.findById(vendor.getUserId())
+                .map(user -> new VendorResponse(
+                        vendor.getVendorId(),
+                        vendor.getUserId(),
+                        vendor.getBusinessName(),
+                        vendor.getGstNumber(),
+                        vendor.getAddress(),
+                        vendor.getCity(),
+                        vendor.getServiceArea(),
+                        vendor.getKycStatus(),
+                        vendor.getRating(),
+                        vendor.getCreatedAt(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getStatus()
+                ))
+                .switchIfEmpty(
+                        Mono.just(new VendorResponse(
+                                vendor.getVendorId(),
+                                vendor.getUserId(),
+                                vendor.getBusinessName(),
+                                vendor.getGstNumber(),
+                                vendor.getAddress(),
+                                vendor.getCity(),
+                                vendor.getServiceArea(),
+                                vendor.getKycStatus(),
+                                vendor.getRating(),
+                                vendor.getCreatedAt(),
+                                null,
+                                null,
+                                null,
+                                null
+                        ))
+                );
     }
-
 }
