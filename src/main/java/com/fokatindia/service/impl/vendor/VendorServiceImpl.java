@@ -5,6 +5,7 @@ import com.fokatindia.dto.vendor.VendorRequest;
 import com.fokatindia.dto.vendor.VendorResponse;
 import com.fokatindia.entity.vendor.Vendor;
 import com.fokatindia.exception.ResourceNotFoundException;
+import com.fokatindia.repository.UserRepository;
 import com.fokatindia.repository.vendor.VendorRepository;
 import com.fokatindia.service.vendor.VendorService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,7 @@ import java.time.LocalDateTime;
 public class VendorServiceImpl implements VendorService {
 
     private final VendorRepository vendorRepo;
-
-
+    private final UserRepository userRepo;
 
     // =====================================================
     // VENDOR
@@ -103,10 +103,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Flux<VendorResponse> getAllVendors() {
-
-        return vendorRepo.findAll()
-
-                .map(this::mapVendorResponse);
+        return vendorRepo.findAllVendorDetails();
     }
 
     @Override
