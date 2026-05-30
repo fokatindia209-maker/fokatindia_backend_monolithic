@@ -6,6 +6,8 @@ import com.fokatindia.dto.vendor.CategoryRequest;
 import com.fokatindia.dto.vendor.CategoryResponse;
 import com.fokatindia.service.vendor.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -24,11 +26,31 @@ public class CategoryController {
     // =====================================================
 
     @PreAuthorize("hasAuthority('CATEGORY_CREATE')")
-    @PostMapping
+    @PostMapping(
+            value = "/create",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public Mono<ApiResponse<CategoryResponse>> create(
-            @RequestBody CategoryRequest request
-    ) {
+            @RequestPart("name") String name,
 
+            @RequestPart("description") String description,
+
+            @RequestPart("displayOrder") String displayOrder,
+
+            @RequestPart("slug") String slug,
+
+            @RequestPart("active") String active,
+
+            @RequestPart("file") FilePart file
+    ) {
+        CategoryRequest request = new CategoryRequest();
+
+        request.setName(name);
+        request.setDescription(description);
+        request.setDisplayOrder(Integer.valueOf(displayOrder));
+        request.setSlug(slug);
+        request.setActive(Boolean.valueOf(active));
+        request.setImageUrl(file);
         return service.create(request)
                 .map(res ->
                         new ApiResponse<>(
@@ -86,12 +108,37 @@ public class CategoryController {
     // =====================================================
 
     @PreAuthorize("hasAuthority('CATEGORY_UPDATE')")
-    @PutMapping("/{id}")
+    @PostMapping(
+            value = "/update/{id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public Mono<ApiResponse<CategoryResponse>> update(
             @PathVariable Long id,
-            @RequestBody CategoryRequest request
-    ) {
+            @RequestPart(value = "name", required = false) String name,
 
+            @RequestPart(value = "description", required = false) String description,
+
+            @RequestPart(value = "displayOrder", required = false) String displayOrder,
+
+            @RequestPart(value = "slug", required = false) String slug,
+
+            @RequestPart(value = "active", required = false) String active,
+
+            @RequestPart(value = "file", required = false) FilePart file
+    ) {
+        CategoryRequest request = new CategoryRequest();
+
+        request.setName(name);
+        request.setDescription(description);
+        request.setSlug(slug);
+
+        if (displayOrder != null)
+            request.setDisplayOrder(Integer.valueOf(displayOrder));
+
+        if (active != null)
+            request.setActive(Boolean.valueOf(active));
+
+        request.setImageUrl(file);
         return service.update(id, request)
                 .map(res ->
                         new ApiResponse<>(

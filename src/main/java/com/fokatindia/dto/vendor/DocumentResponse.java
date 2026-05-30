@@ -16,8 +16,6 @@ public class DocumentResponse {
     private String documentUrl;
     private String status;
     private String remarks;
-
     private LocalDateTime uploadedAt;
-
     private LocalDateTime verifiedAt;
 }

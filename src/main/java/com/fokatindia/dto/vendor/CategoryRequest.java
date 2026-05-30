@@ -5,6 +5,7 @@
 package com.fokatindia.dto.vendor;
 
 import lombok.Data;
+import org.springframework.http.codec.multipart.FilePart;
 
 @Data
 public class CategoryRequest {
@@ -13,9 +14,11 @@ public class CategoryRequest {
 
     private String description;
 
-    private String imageUrl;
+    private FilePart imageUrl;
 
     private Integer displayOrder;
 
     private String slug;
+
+    private Boolean active;
 }

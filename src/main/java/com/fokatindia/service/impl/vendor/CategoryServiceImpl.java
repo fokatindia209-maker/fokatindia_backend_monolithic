@@ -6,6 +6,7 @@ import com.fokatindia.dto.vendor.CategoryResponse;
 import com.fokatindia.entity.vendor.Category;
 import com.fokatindia.exception.ResourceNotFoundException;
 import com.fokatindia.repository.vendor.CategoryRepository;
+import com.fokatindia.service.CloudinaryService;
 import com.fokatindia.service.vendor.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CategoryServiceImpl   implements CategoryService {
 
     private final CategoryRepository repository;
 
+    private final CloudinaryService cloudinaryService;
 
     // =====================================================
     // GET ALL CATEGORIES
@@ -103,7 +105,10 @@ public class CategoryServiceImpl   implements CategoryService {
                 )
 
                 .switchIfEmpty(
-                        Mono.defer(() -> {
+                        cloudinaryService
+                                .upload(request.getImageUrl())
+
+                         .flatMap(imageUrl -> {
                             Category category = new Category();
 
                             category.setName(
@@ -115,7 +120,7 @@ public class CategoryServiceImpl   implements CategoryService {
                             );
 
                             category.setImageUrl(
-                                    request.getImageUrl()
+                                    imageUrl
                             );
 
                             category.setDisplayOrder(
@@ -138,7 +143,7 @@ public class CategoryServiceImpl   implements CategoryService {
 
                             return repository.save(category)
                                     .map(this::mapToResponse);
-                        })
+                         })
                 )
                 .cast(CategoryResponse.class);
     }
@@ -174,12 +179,20 @@ public class CategoryServiceImpl   implements CategoryService {
                                 request.getDescription()
                         );
                     }
+                    // IMAGE UPLOAD LOGIC (IMPORTANT)
+                    Mono<String> imageMono;
 
                     if (request.getImageUrl() != null) {
-                        category.setImageUrl(
-                                request.getImageUrl()
-                        );
+                        imageMono = cloudinaryService.upload(request.getImageUrl());
+                    } else {
+                        imageMono = Mono.justOrEmpty(category.getImageUrl());
                     }
+
+//                    if (request.getImageUrl() != null) {
+//                        category.setImageUrl(
+//                                request.getImageUrl()
+//                        );
+//                    }
 
                     if (request.getDisplayOrder() != null) {
                         category.setDisplayOrder(
@@ -193,8 +206,16 @@ public class CategoryServiceImpl   implements CategoryService {
                     }
 
 
-                    category.setUpdatedAt(LocalDateTime.now());
-                    return repository.save(category);
+
+                    return imageMono.flatMap(imageUrl -> {
+
+                        category.setImageUrl(imageUrl);
+                        category.setUpdatedAt(LocalDateTime.now());
+
+                        return repository.save(category);
+                    });
+
+                  //  return repository.save(category);
                 })
 
                 .map(this::mapToResponse);
