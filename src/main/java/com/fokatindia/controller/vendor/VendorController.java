@@ -65,7 +65,7 @@ public class VendorController {
     // =====================================================
 
     @PreAuthorize("hasAuthority('VENDOR_MANAGE')")
-    @GetMapping
+    @GetMapping("")
     public Mono<ApiResponse<List<VendorResponse>>> getAllVendors() {
 
         return service.getAllVendors()

@@ -16,7 +16,7 @@ SELECT
     v.vendor_id,
     v.user_id,
     v.business_name,
-    v.active,
+    u.status,
     u.name,
     u.email,
     u.phone
