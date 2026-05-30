@@ -36,5 +36,14 @@ public class VendorResponse {
     private String status;
 
     public VendorResponse(Long vendorId, Long userId, String businessName, String gstNumber, String address, String city, String serviceArea, String kycStatus, Double rating) {
+        this.vendorId = vendorId;
+        this.userId = userId;
+        this.businessName = businessName;
+        this.gstNumber = gstNumber;
+        this.address = address;
+        this.city = city;
+        this.serviceArea = serviceArea;
+        this.kycStatus = kycStatus;
+        this.rating = rating;
     }
 }

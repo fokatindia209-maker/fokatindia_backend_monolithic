@@ -26,5 +26,13 @@ public class SubVendorResponse {
     private String status;
 
     public SubVendorResponse(Long userId, Long subVendorId, Long vendorId, String specialization, Integer experienceYears, String availabilityStatus, Double rating, LocalDateTime createdAt) {
+        this.userId = userId;
+        this.subVendorId = subVendorId;
+        this.vendorId = vendorId;
+        this.specialization = specialization;
+        this.experienceYears = experienceYears;
+        this.availabilityStatus = availabilityStatus;
+        this.rating = rating;
+        this.createdAt = createdAt;
     }
 }
