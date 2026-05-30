@@ -7,6 +7,8 @@ import com.fokatindia.dto.vendor.ServiceRequest;
 import com.fokatindia.dto.vendor.ServiceResponse;
 import com.fokatindia.service.vendor.ServiceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -23,23 +25,63 @@ public class ServiceController {
     // =====================================================
     // CREATE SERVICE
     // =====================================================
-
     @PreAuthorize("hasAuthority('SERVICE_ADD')")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Mono<ApiResponse<ServiceResponse>> create(
-            @RequestBody ServiceRequest request
+
+            @RequestPart("categoryId") String categoryId,
+            @RequestPart("name") String name,
+            @RequestPart("description") String description,
+            @RequestPart("price") String price,
+            @RequestPart("discountedPrice") String discountedPrice,
+            @RequestPart("durationMinutes") String durationMinutes,
+            @RequestPart(value = "serviceCode", required = false) String serviceCode,
+            @RequestPart(value = "featured", required = false) String featured,
+            @RequestPart(value = "active", required = false) String active,
+            @RequestPart(value = "serviceType", required = false) String serviceType,
+            @RequestPart(value = "slug", required = false) String slug,
+            @RequestPart(value = "file", required = false) FilePart file
     ) {
 
+        ServiceRequest request = new ServiceRequest();
+
+        request.setCategoryId(Long.valueOf(categoryId));
+        request.setName(name);
+        request.setDescription(description);
+        request.setPrice(Double.valueOf(price));
+        request.setDiscountedPrice(Double.valueOf(discountedPrice));
+        request.setDurationMinutes(Integer.valueOf(durationMinutes));
+
+        request.setServiceCode(serviceCode);
+        request.setFeatured(Boolean.valueOf(featured));
+        request.setActive(Boolean.valueOf(active));
+        request.setServiceType(serviceType);
+        request.setSlug(slug);
+        request.setFile(file);
         return service.create(request)
-                .map(res ->
-                        new ApiResponse<>(
-                                "success",
-                                200,
-                                "Service created successfully",
-                                res
-                        )
-                );
+                .map(res -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Service created successfully",
+                        res
+                ));
     }
+//    @PreAuthorize("hasAuthority('SERVICE_ADD')")
+//    @PostMapping
+//    public Mono<ApiResponse<ServiceResponse>> create(
+//            @RequestBody ServiceRequest request
+//    ) {
+//
+//        return service.create(request)
+//                .map(res ->
+//                        new ApiResponse<>(
+//                                "success",
+//                                200,
+//                                "Service created successfully",
+//                                res
+//                        )
+//                );
+//    }
 
     // =====================================================
     // GET SERVICE BY ID
