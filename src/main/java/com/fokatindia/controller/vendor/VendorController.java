@@ -80,6 +80,24 @@ public class VendorController {
                 );
     }
 
+
+    @PreAuthorize("hasAuthority('VENDOR_MANAGE')")
+    @GetMapping("/users")
+    public Mono<ApiResponse<List<VendorResponse>>> getAllVendorsWithUserId() {
+
+        return service.getAllVendorsWithUserId()
+                .collectList()
+                .map(list ->
+                        new ApiResponse<>(
+                                "success",
+                                200,
+                                "Vendor list fetched",
+                                list
+                        )
+                );
+    }
+
+
     // =====================================================
     // UPDATE VENDOR PROFILE
     // =====================================================

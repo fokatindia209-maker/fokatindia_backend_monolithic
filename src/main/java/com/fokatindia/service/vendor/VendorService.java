@@ -11,6 +11,6 @@ public interface VendorService {
     Flux<VendorResponse> getAllVendors();
     Mono<VendorResponse> updateVendor(Long id, VendorRequest request);
     Mono<VendorResponse> getVendorByUserId(Long userId);
-
+    Flux<VendorResponse> getAllVendorsWithUserId();
 
 }

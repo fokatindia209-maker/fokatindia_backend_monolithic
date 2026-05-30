@@ -23,5 +23,5 @@ SELECT
 FROM vendors v
 JOIN users u ON v.user_id = u.user_id
 """)
-    Flux<VendorResponse> findAllVendorDetails();
+    Flux<VendorResponse> findAllVendorDetailWithUserId();
 }

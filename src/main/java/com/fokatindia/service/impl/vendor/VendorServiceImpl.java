@@ -103,9 +103,15 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Flux<VendorResponse> getAllVendors() {
-        return vendorRepo.findAllVendorDetails();
+        return vendorRepo.findAll()
+                .map(this::mapVendorResponse);
     }
 
+
+    @Override
+    public Flux<VendorResponse> getAllVendorsWithUserId() {
+        return vendorRepo.findAllVendorDetailWithUserId();
+    }
     @Override
     public Mono<VendorResponse> updateVendor(
             Long id,
