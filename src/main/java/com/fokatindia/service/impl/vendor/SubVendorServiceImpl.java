@@ -71,6 +71,17 @@ public class SubVendorServiceImpl implements SubVendorService {
 
                 .map(this::mapToResponse);
     }
+
+    @Override
+    public Flux<SubVendorResponse> getSubVendorsWithUser(
+            Long vendorId
+    ) {
+
+        return subVendorRepository.findSubVendorsWithUser(vendorId);
+    }
+
+
+
     // =====================================================
     // UPDATE
     // =====================================================

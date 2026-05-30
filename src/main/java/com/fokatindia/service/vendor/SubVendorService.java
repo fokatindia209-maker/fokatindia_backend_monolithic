@@ -10,6 +10,7 @@ public interface SubVendorService {
     Flux<SubVendorResponse> getSubVendors(Long vendorId);
     Mono<SubVendorResponse> updateSubVendor(Long id, SubVendorRequest request);
     Flux<SubVendorResponse> getAllSubVendors();
+    Flux<SubVendorResponse> getSubVendorsWithUser(Long vendorId);
 
 
 }
