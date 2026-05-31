@@ -18,4 +18,5 @@ public interface CategoryService {
     );
 
     Mono<Void> delete(Long id);
+
 }

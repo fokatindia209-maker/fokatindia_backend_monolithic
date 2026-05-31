@@ -163,7 +163,6 @@ public class SubVendorServiceImpl implements SubVendorService {
                         subVendor.getAvailabilityStatus(),
                         subVendor.getRating(),
                         subVendor.getCreatedAt(),
-
                         user.getName(),
                         user.getEmail(),
                         user.getPhone(),
@@ -179,7 +178,6 @@ public class SubVendorServiceImpl implements SubVendorService {
                                 subVendor.getAvailabilityStatus(),
                                 subVendor.getRating(),
                                 subVendor.getCreatedAt(),
-
                                 null,
                                 null,
                                 null,

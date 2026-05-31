@@ -17,13 +17,14 @@ public interface SubVendorRepository  extends ReactiveCrudRepository<SubVendor, 
 
     @Query("""
 SELECT
-    sv.sub_vendor_id AS subVendorId,
-    sv.vendor_id AS vendorId,
+    sv.user_id AS user_id,
+    sv.sub_vendor_id AS sub_vendor_id,
+    sv.vendor_id AS vendor_id,
     sv.specialization AS specialization,
-    sv.experience_years AS experienceYears,
-    sv.availability_status AS availabilityStatus,
+    sv.experience_years AS experience_years,
+    sv.availability_status AS availability_status,
     sv.rating AS rating,
-    
+    sv.created_at AS created_at,
     u.name AS name,
     u.email AS email,
     u.phone AS phone,
