@@ -15,6 +15,8 @@ public class ReviewResponse {
 
     private Long vendorId;
 
+    private Long subVendorId;
+    private Long categoryId;
     private Long serviceId;
 
     private Integer rating;

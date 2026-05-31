@@ -19,10 +19,15 @@ public class Notifications {
 
     private String message;
 
-    private String type;
-    // BOOKING, PAYMENT, SYSTEM, PROMO
+    private String type; // BOOKING, PAYMENT, SYSTEM, PROMO
+
+    private Long referenceId; // bookingId/paymentId etc (VERY useful)
 
     private Boolean readStatus = false;
 
+    private Boolean active = true;
+
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

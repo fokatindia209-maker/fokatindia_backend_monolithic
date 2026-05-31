@@ -9,15 +9,23 @@ public interface ReviewService {
 
     Mono<ReviewResponse> createReview(ReviewRequest request);
 
-    Flux<ReviewResponse> getAll();
+    Flux<ReviewResponse> getAllReviews();
 
-    Mono<ReviewResponse> getById(Long id);
+    Mono<ReviewResponse> getReviewById(Long id);
+
+    Flux<ReviewResponse> getReviewsByVendor(Long vendorId);
+
+    Flux<ReviewResponse> getReviewsByService(Long serviceId);
+
+    Flux<ReviewResponse> getReviewsBySubVendor(Long subVendorId);
+
+    Flux<ReviewResponse> getReviewsByUser(Long userId);
 
     Mono<ReviewResponse> updateReview(Long id, ReviewRequest request);
 
     Mono<Void> deleteReview(Long id);
 
-    Flux<ReviewResponse> getByVendorId(Long vendorId);
+    Flux<ReviewResponse> getReviewsByBooking(Long bookingId);
+    Flux<ReviewResponse> getReviewsByCategory(Long categoryId);
 
-    Flux<ReviewResponse> getByServiceId(Long serviceId);
 }

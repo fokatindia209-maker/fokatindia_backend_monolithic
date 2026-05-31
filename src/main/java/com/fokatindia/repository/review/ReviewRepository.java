@@ -13,4 +13,10 @@ public interface ReviewRepository extends ReactiveCrudRepository<Review, Long> {
     Flux<Review> findByServiceId(Long serviceId);
 
     Flux<Review> findByUserId(Long userId);
+
+    Flux<Review> findBySubVendorId(Long subVendorId);
+
+    Flux<Review> findByBookingId(Long bookingId);
+
+    Flux<Review> findByCategoryId(Long categoryId);
 }

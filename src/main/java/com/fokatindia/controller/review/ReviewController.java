@@ -39,8 +39,8 @@ public class ReviewController {
 
     @PreAuthorize("hasAuthority('REVIEW_VIEW')")
     @GetMapping("")
-    public Mono<ApiResponse<List<ReviewResponse>>> getAll() {
-        return reviewService.getAll()
+    public Mono<ApiResponse<List<ReviewResponse>>> getAllReviews() {
+        return reviewService.getAllReviews()
                 .collectList()
                 .map(list -> new ApiResponse<>(
                         "success",
@@ -54,8 +54,8 @@ public class ReviewController {
     // ================= GET BY ID =================
     @PreAuthorize("hasAuthority('REVIEW_VIEW')")
     @GetMapping("/{id}")
-    public Mono<ApiResponse<ReviewResponse>> getById(@PathVariable Long id) {
-        return reviewService.getById(id)
+    public Mono<ApiResponse<ReviewResponse>> getReviewById(@PathVariable Long id) {
+        return reviewService.getReviewById(id)
                 .map(res -> new ApiResponse<>(
                         "success",
                         200,
@@ -93,5 +93,98 @@ public class ReviewController {
                                 "Deleted ID: " + id
                         )
                 );
+    }
+
+
+    @PreAuthorize("hasAuthority('REVIEW_VIEW')")
+    @GetMapping("/vendor/{vendorId}")
+    public Mono<ApiResponse<List<ReviewResponse>>> getReviewsByVendor(
+            @PathVariable Long vendorId
+    ) {
+        return reviewService.getReviewsByVendor(vendorId)
+                .collectList()
+                .map(list -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Vendor reviews fetched successfully",
+                        list
+                ));
+    }
+
+    @PreAuthorize("hasAuthority('REVIEW_VIEW')")
+    @GetMapping("/subvendor/{subVendorId}")
+    public Mono<ApiResponse<List<ReviewResponse>>> getReviewsBySubVendor(
+            @PathVariable Long subVendorId
+    ) {
+        return reviewService.getReviewsBySubVendor(subVendorId)
+                .collectList()
+                .map(list -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "SubVendor reviews fetched successfully",
+                        list
+                ));
+    }
+
+    @PreAuthorize("hasAuthority('REVIEW_VIEW')")
+    @GetMapping("/user/{userId}")
+    public Mono<ApiResponse<List<ReviewResponse>>> getReviewsByUser(
+            @PathVariable Long userId
+    ) {
+        return reviewService.getReviewsByUser(userId)
+                .collectList()
+                .map(list -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "User reviews fetched successfully",
+                        list
+                ));
+    }
+
+    @PreAuthorize("hasAuthority('REVIEW_VIEW')")
+    @GetMapping("/booking/{bookingId}")
+    public Mono<ApiResponse<List<ReviewResponse>>> getReviewsByBooking(
+            @PathVariable Long bookingId
+    ) {
+        return reviewService.getReviewsByBooking(bookingId)
+                .collectList()
+                .map(list -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Booking reviews fetched successfully",
+                        list
+                ));
+    }
+
+    @PreAuthorize("hasAuthority('REVIEW_VIEW')")
+    @GetMapping("/service/{serviceId}")
+    public Mono<ApiResponse<List<ReviewResponse>>> getReviewsByService(
+            @PathVariable Long serviceId
+    ) {
+        return reviewService.getReviewsByService(serviceId)
+                .collectList()
+                .map(list -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Service reviews fetched successfully",
+                        list
+                ));
+    }
+
+
+
+    @PreAuthorize("hasAuthority('REVIEW_VIEW')")
+    @GetMapping("/category/{categoryId}")
+    public Mono<ApiResponse<List<ReviewResponse>>> getReviewsByCategory(
+            @PathVariable Long categoryId
+    ) {
+        return reviewService.getReviewsByCategory(categoryId)
+                .collectList()
+                .map(list -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Category reviews fetched successfully",
+                        list
+                ));
     }
 }

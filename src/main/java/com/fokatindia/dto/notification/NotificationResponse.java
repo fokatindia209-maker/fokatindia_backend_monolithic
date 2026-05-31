@@ -8,16 +8,13 @@ import java.time.LocalDateTime;
 public class NotificationResponse {
 
     private Long id;
-
     private Long userId;
-
     private String title;
-
     private String message;
-
     private String type;
-
+    private Long referenceId;
     private Boolean readStatus;
-
+    private Boolean active;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

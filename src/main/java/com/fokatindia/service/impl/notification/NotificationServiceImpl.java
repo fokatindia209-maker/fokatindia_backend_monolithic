@@ -3,78 +3,124 @@ package com.fokatindia.service.impl.notification;
 
 import com.fokatindia.dto.notification.NotificationRequest;
 import com.fokatindia.dto.notification.NotificationResponse;
+import com.fokatindia.entity.Token;
 import com.fokatindia.entity.notification.Notifications;
+import com.fokatindia.repository.TokenRepository;
 import com.fokatindia.repository.notification.NotificationRepository;
+import com.fokatindia.service.FirebaseService;
 import com.fokatindia.service.notification.NotificationService;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository repository;
+    private final TokenRepository tokenRepository;
+    private final FirebaseService firebase;
 
-    public NotificationServiceImpl(NotificationRepository repository) {
+    public NotificationServiceImpl(NotificationRepository repository, TokenRepository tokenRepository, FirebaseService firebase) {
         this.repository = repository;
+        this.tokenRepository = tokenRepository;
+        this.firebase = firebase;
     }
 
     // =====================================================
     // SEND NOTIFICATION
     // =====================================================
+
     @Override
-    public Mono<NotificationResponse> sendNotification(
-            NotificationRequest request
-    ) {
+    public Mono<NotificationResponse> sendNotification(NotificationRequest request) {
 
         Notifications notification = new Notifications();
-
         notification.setUserId(request.getUserId());
         notification.setTitle(request.getTitle());
         notification.setMessage(request.getMessage());
         notification.setType(request.getType());
         notification.setReadStatus(false);
+        notification.setActive(true);
         notification.setCreatedAt(LocalDateTime.now());
 
         return repository.save(notification)
-
                 .flatMap(saved -> {
 
-                    // SEND FIREBASE PUSH
-                    if (request.getFcmToken() != null &&
-                            !request.getFcmToken().isBlank()) {
-
-                        Message message = Message.builder()
-
-                                .setToken(request.getFcmToken())
-
-                                .setNotification(
-                                        com.google.firebase.messaging.Notification
-                                                .builder()
-                                                .setTitle(request.getTitle())
-                                                .setBody(request.getMessage())
-                                                .build()
+                    // 🔥 CASE 1: SEND TO ALL USERS
+                    if (Boolean.TRUE.equals(request.getSendToAll())) {
+                        return tokenRepository.findAll()
+                                .map(Token::getFcmToken)
+                                .filter(Objects::nonNull)
+                                .distinct()
+                                .flatMap(token ->
+                                        firebase.send(
+                                                token,
+                                                request.getTitle(),
+                                                request.getMessage(),
+                                                request.getType()
+                                        )
                                 )
-
-                                .putData("type", request.getType())
-
-                                .build();
-
-                        return Mono.fromCallable(() -> {
-
-                            FirebaseMessaging
-                                    .getInstance()
-                                    .send(message);
-
-                            return mapToResponse(saved);
-                        });
+                                .then()
+                                .thenReturn(map(saved));
                     }
 
-                    return Mono.just(mapToResponse(saved));
+                    // ================================
+                    // 2. MULTIPLE USERS
+                    // ================================
+                    if (request.getUserIds() != null && !request.getUserIds().isEmpty()) {
+                        return tokenRepository.findByUserIds(request.getUserIds())
+                                .map(Token::getFcmToken)
+                                .filter(Objects::nonNull)
+                                .distinct()
+                                .flatMap(token ->
+                                        firebase.send(
+                                                token,
+                                                request.getTitle(),
+                                                request.getMessage(),
+                                                request.getType()
+                                        )
+                                )
+                                .then()
+                                .thenReturn(map(saved));
+                    }
+
+                    // ================================
+                    // 3. SINGLE USER (userId)
+                    // ================================
+                    if (request.getUserId() != null) {
+                        return tokenRepository.findByUserId(request.getUserId())
+                                .map(Token::getFcmToken)
+                                .filter(Objects::nonNull)
+                                .flatMap(token ->
+                                        firebase.send(
+                                                token,
+                                                request.getTitle(),
+                                                request.getMessage(),
+                                                request.getType()
+                                        )
+                                )
+                                .thenReturn(map(saved));
+                    }
+
+                    // ================================
+                    // 4. DIRECT TOKEN
+                    // ================================
+                    if (request.getFcmToken() != null) {
+                        return firebase.send(
+                                request.getFcmToken(),
+                                request.getTitle(),
+                                request.getMessage(),
+                                request.getType()
+                        ).thenReturn(map(saved));
+                    }
+
+
+                    return Mono.just(map(saved));
                 });
     }
 
@@ -86,7 +132,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         return repository.findAll()
 
-                .map(this::mapToResponse);
+                .map(this::map);
     }
 
     // =====================================================
@@ -105,7 +151,7 @@ public class NotificationServiceImpl implements NotificationService {
                         )
                 )
 
-                .map(this::mapToResponse);
+                .map(this::map);
     }
 
     // =====================================================
@@ -146,7 +192,7 @@ public class NotificationServiceImpl implements NotificationService {
                     return repository.save(notification);
                 })
 
-                .map(this::mapToResponse);
+                .map(this::map);
     }
 
     // =====================================================
@@ -172,7 +218,7 @@ public class NotificationServiceImpl implements NotificationService {
                     return repository.save(notification);
                 })
 
-                .map(this::mapToResponse);
+                .map(this::map);
     }
 
     // =====================================================
@@ -197,21 +243,18 @@ public class NotificationServiceImpl implements NotificationService {
     // =====================================================
     // MAPPER
     // =====================================================
-    private NotificationResponse mapToResponse(
-            Notifications notification
-    ) {
+    private NotificationResponse map(Notifications n) {
 
-        NotificationResponse response =
-                new NotificationResponse();
-
-        response.setId(notification.getId());
-        response.setUserId(notification.getUserId());
-        response.setTitle(notification.getTitle());
-        response.setMessage(notification.getMessage());
-        response.setType(notification.getType());
-        response.setReadStatus(notification.getReadStatus());
-        response.setCreatedAt(notification.getCreatedAt());
-
-        return response;
+        NotificationResponse r = new NotificationResponse();
+        r.setId(n.getId());
+        r.setUserId(n.getUserId());
+        r.setTitle(n.getTitle());
+        r.setMessage(n.getMessage());
+        r.setType(n.getType());
+        r.setReadStatus(n.getReadStatus());
+        r.setActive(n.getActive());
+        r.setCreatedAt(n.getCreatedAt());
+        r.setUpdatedAt(n.getUpdatedAt());
+        return r;
     }
 }

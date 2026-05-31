@@ -19,6 +19,8 @@ public class Review {
 
     private Long vendorId;
 
+    private Long subVendorId;
+    private Long categoryId;
     private Long serviceId;
 
     private Integer rating; // 1 to 5
