@@ -87,7 +87,7 @@ public class CategoryController {
     // GET ALL CATEGORIES
     // =====================================================
 
-    @PreAuthorize("hasAuthority('CATEGORY_VIEW')")
+//    @PreAuthorize("hasAuthority('CATEGORY_VIEW')")
     @GetMapping
     public Mono<ApiResponse<List<CategoryResponse>>> getAll() {
 
