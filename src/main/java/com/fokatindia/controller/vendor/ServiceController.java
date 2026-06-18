@@ -108,7 +108,7 @@ public class ServiceController {
     // GET ALL SERVICES
     // =====================================================
 
-    @PreAuthorize("hasAuthority('SERVICE_VIEW')")
+//    @PreAuthorize("hasAuthority('SERVICE_VIEW')")
     @GetMapping
     public Mono<ApiResponse<List<ServiceResponse>>> getAll() {
 
