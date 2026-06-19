@@ -1,6 +1,7 @@
 package com.fokatindia.service.impl.vendor;
 
 
+import com.fokatindia.dto.vendor.CategoryResponse;
 import com.fokatindia.dto.vendor.SubVendorRequest;
 import com.fokatindia.dto.vendor.SubVendorResponse;
 import com.fokatindia.entity.vendor.SubVendor;
@@ -113,8 +114,18 @@ public class SubVendorServiceImpl implements SubVendorService {
                 .flatMap(this::mapToResponse);
     }
 
-
-
+    @Override
+    public Mono<SubVendorResponse> getSubVendorBySubVendorId(Long subVendorId) {
+        return subVendorRepository.findById(subVendorId)
+                .switchIfEmpty(
+                        Mono.error(
+                                new ResourceNotFoundException(
+                                        "Category not found"
+                                )
+                        )
+                )
+                .flatMap(this::mapToResponse);
+    }
 
     // =====================================================
     // UPDATE

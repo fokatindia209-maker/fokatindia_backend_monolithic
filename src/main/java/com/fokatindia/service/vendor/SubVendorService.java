@@ -1,5 +1,6 @@
 package com.fokatindia.service.vendor;
 
+import com.fokatindia.dto.vendor.CategoryResponse;
 import com.fokatindia.dto.vendor.SubVendorRequest;
 import com.fokatindia.dto.vendor.SubVendorResponse;
 import reactor.core.publisher.Flux;
@@ -13,6 +14,5 @@ public interface SubVendorService {
     Flux<SubVendorResponse> getSubVendorsWithUser(Long vendorId);
     Flux<SubVendorResponse> getSubVendorByServiceId(Long serviceId,   Double lat,
                                                     Double lng);
-
-
+    Mono<SubVendorResponse> getSubVendorBySubVendorId(Long subVendorId);
 }
