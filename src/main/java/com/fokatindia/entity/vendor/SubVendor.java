@@ -21,6 +21,10 @@ public class SubVendor {
 
     private String specialization;
 
+    private Double latitude;
+    private Double longitude;
+    private Double serviceRadiusKm;
+
     private Integer experienceYears;
 
     // AVAILABLE, BUSY, INACTIVE

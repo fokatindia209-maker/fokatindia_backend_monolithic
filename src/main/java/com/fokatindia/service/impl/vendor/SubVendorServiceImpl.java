@@ -78,16 +78,39 @@ public class SubVendorServiceImpl implements SubVendorService {
             Long vendorId
     ) {
 
-        return subVendorRepository.findSubVendorsWithUser(vendorId);
+        return subVendorRepository.findSubVendorsWithUser(vendorId).flatMap(this::mapToResponse);
     }
 
 
     @Override
     public Flux<SubVendorResponse> getSubVendorByServiceId(
-            Long serviceId
+            Long serviceId,
+            Double lat,
+            Double lng
     ) {
 
-        return subVendorRepository.findByServiceId(serviceId);
+        return subVendorRepository.findByServiceId(serviceId)
+                .filter(subVendor -> {
+
+                    if (subVendor.getLatitude() == null ||
+                            subVendor.getLongitude() == null) {
+                        return false;
+                    }
+
+                    double distance = distanceKm(
+                            lat,
+                            lng,
+                            subVendor.getLatitude(),
+                            subVendor.getLongitude()
+                    );
+
+                    double radius = subVendor.getServiceRadiusKm() == null
+                            ? 10
+                            : subVendor.getServiceRadiusKm();
+
+                    return distance <= radius;
+                })
+                .flatMap(this::mapToResponse);
     }
 
 
@@ -194,6 +217,29 @@ public class SubVendorServiceImpl implements SubVendorService {
                                 null
                         ))
                 );
+    }
+
+
+    private double distanceKm(
+            double lat1,
+            double lon1,
+            double lat2,
+            double lon2
+    ) {
+        final int R = 6371;
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2)
+                * Math.sin(lonDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
     }
 
 }

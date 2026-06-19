@@ -65,10 +65,12 @@ public class SubVendorController {
 
     @GetMapping("/service/{serviceId}")
     public Mono<ApiResponse<List<SubVendorResponse>>> getSubVendorByServiceId(
-            @PathVariable Long serviceId
+            @PathVariable Long serviceId,
+            @RequestParam Double lat,
+            @RequestParam Double lng
     ) {
 
-        return service.getSubVendorByServiceId(serviceId)
+        return service.getSubVendorByServiceId(serviceId, lat, lng)
                 .collectList()
                 .map(list ->
                         new ApiResponse<>(

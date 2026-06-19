@@ -26,4 +26,37 @@ public class SubVendorResponse {
     private String email;
     private String phone;
     private String status;
+
+
+    private Double latitude;
+    private Double longitude;
+    private Double distanceKm;
+
+    public SubVendorResponse(
+            Long userId,
+            Long subVendorId,
+            Long vendorId,
+            String specialization,
+            Integer experienceYears,
+            String availabilityStatus,
+            Double rating,
+            LocalDateTime createdAt,
+            String name,
+            String email,
+            String phone,
+            String status
+    ) {
+        this.userId = userId;
+        this.subVendorId = subVendorId;
+        this.vendorId = vendorId;
+        this.specialization = specialization;
+        this.experienceYears = experienceYears;
+        this.availabilityStatus = availabilityStatus;
+        this.rating = rating;
+        this.createdAt = createdAt;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.status = status;
+    }
 }

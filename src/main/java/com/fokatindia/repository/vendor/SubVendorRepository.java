@@ -34,7 +34,7 @@ FROM sub_vendors sv
 JOIN users u ON sv.user_id = u.user_id
 WHERE sv.vendor_id = :vendorId
 """)
-    Flux<SubVendorResponse> findSubVendorsWithUser(Long vendorId);
+    Flux<SubVendor> findSubVendorsWithUser(Long vendorId);
 
 
     @Query("""
@@ -44,5 +44,5 @@ JOIN sub_vendor_services svs
   ON sv.sub_vendor_id = svs.sub_vendor_id
 WHERE svs.service_id = :serviceId
 """)
-    Flux<SubVendorResponse> findByServiceId(Long serviceId);
+    Flux<SubVendor> findByServiceId(Long serviceId);
 }
