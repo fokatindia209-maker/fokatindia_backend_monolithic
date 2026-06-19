@@ -62,6 +62,25 @@ public class SubVendorController {
     }
 
 
+
+    @GetMapping("/service/{serviceId}")
+    public Mono<ApiResponse<List<SubVendorResponse>>> getSubVendorByServiceId(
+            @PathVariable Long serviceId
+    ) {
+
+        return service.getSubVendorByServiceId(serviceId)
+                .collectList()
+                .map(list ->
+                        new ApiResponse<>(
+                                "success",
+                                200,
+                                "SubVendor list fetched",
+                                list
+                        )
+                );
+    }
+
+
     @PreAuthorize("hasAuthority('SUBVENDOR_VIEW')")
     @GetMapping("/vendor/{vendorId}/users")
     public Mono<ApiResponse<List<SubVendorResponse>>> getSubVendorsWithUser(

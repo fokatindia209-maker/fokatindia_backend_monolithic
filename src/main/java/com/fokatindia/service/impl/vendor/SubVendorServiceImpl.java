@@ -82,6 +82,16 @@ public class SubVendorServiceImpl implements SubVendorService {
     }
 
 
+    @Override
+    public Flux<SubVendorResponse> getSubVendorByServiceId(
+            Long serviceId
+    ) {
+
+        return subVendorRepository.findByServiceId(serviceId);
+    }
+
+
+
 
     // =====================================================
     // UPDATE
