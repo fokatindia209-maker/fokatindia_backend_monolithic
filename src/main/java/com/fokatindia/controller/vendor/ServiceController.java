@@ -128,7 +128,7 @@ public class ServiceController {
     // GET SERVICES BY CATEGORY
     // =====================================================
 
-    @PreAuthorize("hasAuthority('SERVICE_VIEW')")
+//    @PreAuthorize("hasAuthority('SERVICE_VIEW')")
     @GetMapping("/category/{categoryId}")
     public Mono<ApiResponse<List<ServiceResponse>>> getByCategory(
             @PathVariable Long categoryId
