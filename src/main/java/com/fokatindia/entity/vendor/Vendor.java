@@ -20,9 +20,9 @@ public class Vendor {
 
     private String gstNumber;
 
-    private String address;
-
-    private String city;
+//    private String address;
+//
+//    private String city;
 
     private String serviceArea;
 

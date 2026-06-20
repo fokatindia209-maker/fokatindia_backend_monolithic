@@ -18,9 +18,7 @@ public class VendorResponse {
 
     private String gstNumber;
 
-    private String address;
 
-    private String city;
 
     private String serviceArea;
 

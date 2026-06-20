@@ -47,13 +47,13 @@ public class VendorServiceImpl implements VendorService {
                 request.getGstNumber()
         );
 
-        vendor.setAddress(
-                request.getAddress()
-        );
-
-        vendor.setCity(
-                request.getCity()
-        );
+//        vendor.setAddress(
+//                request.getAddress()
+//        );
+//
+//        vendor.setCity(
+//                request.getCity()
+//        );
 
         vendor.setServiceArea(
                 request.getServiceArea()
@@ -141,17 +141,17 @@ public class VendorServiceImpl implements VendorService {
                         );
                     }
 
-                    if (request.getAddress() != null) {
-                        vendor.setAddress(
-                                request.getAddress()
-                        );
-                    }
-
-                    if (request.getCity() != null) {
-                        vendor.setCity(
-                                request.getCity()
-                        );
-                    }
+//                    if (request.getAddress() != null) {
+//                        vendor.setAddress(
+//                                request.getAddress()
+//                        );
+//                    }
+//
+//                    if (request.getCity() != null) {
+//                        vendor.setCity(
+//                                request.getCity()
+//                        );
+//                    }
 
                     if (request.getServiceArea() != null) {
                         vendor.setServiceArea(
@@ -182,8 +182,8 @@ public class VendorServiceImpl implements VendorService {
                         vendor.getUserId(),
                         vendor.getBusinessName(),
                         vendor.getGstNumber(),
-                        vendor.getAddress(),
-                        vendor.getCity(),
+//                        vendor.getAddress(),
+//                        vendor.getCity(),
                         vendor.getServiceArea(),
                         vendor.getKycStatus(),
                         vendor.getRating(),
@@ -199,8 +199,7 @@ public class VendorServiceImpl implements VendorService {
                                 vendor.getUserId(),
                                 vendor.getBusinessName(),
                                 vendor.getGstNumber(),
-                                vendor.getAddress(),
-                                vendor.getCity(),
+
                                 vendor.getServiceArea(),
                                 vendor.getKycStatus(),
                                 vendor.getRating(),

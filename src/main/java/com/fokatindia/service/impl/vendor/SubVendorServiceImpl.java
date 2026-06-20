@@ -120,7 +120,7 @@ public class SubVendorServiceImpl implements SubVendorService {
                 .switchIfEmpty(
                         Mono.error(
                                 new ResourceNotFoundException(
-                                        "Category not found"
+                                        "SubVendor not found"
                                 )
                         )
                 )
