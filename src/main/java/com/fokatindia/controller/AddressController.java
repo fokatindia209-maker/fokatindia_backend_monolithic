@@ -1,15 +1,15 @@
 package com.fokatindia.controller;
 
-
-
 import com.fokatindia.dto.AddressRequest;
 import com.fokatindia.dto.AddressResponse;
+import com.fokatindia.dto.ApiResponse;
 import com.fokatindia.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,94 +18,138 @@ public class AddressController {
 
     private final AddressService addressService;
 
-
     // ==========================================
     // CREATE ADDRESS
-    // POST /restful/v1/api/addresses
     // ==========================================
     @PostMapping
     @PreAuthorize("hasAuthority('ADDRESS_CREATE')")
-    public Mono<AddressResponse> saveAddress(
+    public Mono<ApiResponse<AddressResponse>> saveAddress(
             @RequestBody AddressRequest request
     ) {
-        return addressService.saveAddress(request);
+        return addressService.saveAddress(request)
+                .map(response ->
+                        new ApiResponse<>(
+                                "success",
+                                201,
+                                "Address created successfully",
+                                response
+                        )
+                );
     }
-
 
     // ==========================================
     // UPDATE ADDRESS
-    // PUT /restful/v1/api/addresses/{addressId}
     // ==========================================
     @PutMapping("/{addressId}")
     @PreAuthorize("hasAuthority('ADDRESS_UPDATE')")
-    public Mono<AddressResponse> updateAddress(
+    public Mono<ApiResponse<AddressResponse>> updateAddress(
             @PathVariable Long addressId,
             @RequestBody AddressRequest request
     ) {
-        return addressService.updateAddress(
-                addressId,
-                request
-        );
+        return addressService.updateAddress(addressId, request)
+                .map(response ->
+                        new ApiResponse<>(
+                                "success",
+                                200,
+                                "Address updated successfully",
+                                response
+                        )
+                );
     }
-
 
     // ==========================================
     // GET ADDRESS BY ID
-    // GET /restful/v1/api/addresses/{addressId}
     // ==========================================
     @GetMapping("/{addressId}")
     @PreAuthorize("hasAuthority('ADDRESS_VIEW')")
-    public Mono<AddressResponse> getAddress(
+    public Mono<ApiResponse<AddressResponse>> getAddress(
             @PathVariable Long addressId
     ) {
-        return addressService.getAddress(addressId);
+        return addressService.getAddress(addressId)
+                .map(response ->
+                        new ApiResponse<>(
+                                "success",
+                                200,
+                                "Address fetched successfully",
+                                response
+                        )
+                );
     }
 
     // ==========================================
-    // GET ALL USER ADDRESSES
-    // GET /restful/v1/api/addresses/user/{userId}
+    // GET USER ADDRESSES
     // ==========================================
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasAuthority('ADDRESS_VIEW')")
-    public Flux<AddressResponse> getUserAddresses(
+    public Mono<ApiResponse<List<AddressResponse>>> getUserAddresses(
             @PathVariable Long userId
     ) {
-        return addressService.getUserAddresses(userId);
+        return addressService.getUserAddresses(userId)
+                .collectList()
+                .map(response ->
+                        new ApiResponse<>(
+                                "success",
+                                200,
+                                "Address list fetched successfully",
+                                response
+                        )
+                );
     }
 
     // ==========================================
     // GET DEFAULT ADDRESS
-    // GET /restful/v1/api/addresses/user/{userId}/default
     // ==========================================
     @GetMapping("/user/{userId}/default")
     @PreAuthorize("hasAuthority('ADDRESS_VIEW')")
-    public Mono<AddressResponse> getDefaultAddress(
+    public Mono<ApiResponse<AddressResponse>> getDefaultAddress(
             @PathVariable Long userId
     ) {
-        return addressService.getDefaultAddress(userId);
+        return addressService.getDefaultAddress(userId)
+                .map(response ->
+                        new ApiResponse<>(
+                                "success",
+                                200,
+                                "Default address fetched successfully",
+                                response
+                        )
+                );
     }
 
     // ==========================================
     // SET DEFAULT ADDRESS
-    // PUT /restful/v1/api/addresses/{addressId}/default
     // ==========================================
     @PutMapping("/{addressId}/default")
     @PreAuthorize("hasAuthority('ADDRESS_SET_DEFAULT')")
-    public Mono<AddressResponse> setDefaultAddress(
+    public Mono<ApiResponse<AddressResponse>> setDefaultAddress(
             @PathVariable Long addressId
     ) {
-        return addressService.setDefaultAddress(addressId);
+        return addressService.setDefaultAddress(addressId)
+                .map(response ->
+                        new ApiResponse<>(
+                                "success",
+                                200,
+                                "Default address updated successfully",
+                                response
+                        )
+                );
     }
 
-
-
-
-    //delete by addressId
+    // ==========================================
+    // DELETE ADDRESS
+    // ==========================================
     @DeleteMapping("/{addressId}")
     @PreAuthorize("hasAuthority('ADDRESS_DELETE')")
-    public Mono<Void> deleteAddress(
+    public Mono<ApiResponse<Void>> deleteAddress(
             @PathVariable Long addressId
     ) {
-        return addressService.deleteAddress(addressId);
+        return addressService.deleteAddress(addressId)
+                .thenReturn(
+                        new ApiResponse<>(
+                                "success",
+                                200,
+                                "Address deleted successfully",
+                                null
+                        )
+                );
     }
 }
