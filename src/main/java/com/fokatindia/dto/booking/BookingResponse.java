@@ -34,6 +34,8 @@ public class BookingResponse {
     private String bookingStatus;
 
     private String paymentStatus;
-
+    private String notes;
+    private String otp;
+    private Boolean active;
     private LocalDateTime createdAt;
 }

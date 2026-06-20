@@ -53,7 +53,8 @@ public class BookingServiceImpl implements BookingService {
                     booking.setBookingStatus("PENDING");
                     booking.setPaymentStatus("PENDING");
                     booking.setActive(true);
-
+                    String otp = String.valueOf((int)(Math.random() * 9000) + 1000);
+                    booking.setOtp(otp);
                     booking.setCreatedAt(LocalDateTime.now());
                     booking.setUpdatedAt(LocalDateTime.now());
 
@@ -197,7 +198,6 @@ public class BookingServiceImpl implements BookingService {
 
         r.setId(b.getId());
         r.setBookingCode(b.getBookingCode());
-
         r.setUserId(b.getUserId());
         r.setVendorId(b.getVendorId());
         r.setServiceId(b.getServiceId());
@@ -206,14 +206,13 @@ public class BookingServiceImpl implements BookingService {
         r.setCategoryId(b.getCategoryId());
         r.setBookingDate(b.getBookingDate());
         r.setBookingTime(b.getBookingTime());
-
         r.setFinalAmount(b.getFinalAmount());
-
         r.setBookingStatus(b.getBookingStatus());
         r.setPaymentStatus(b.getPaymentStatus());
-
+        r.setOtp(b.getOtp());
+        r.setNotes(b.getNotes());
+        r.setActive(b.getActive());
         r.setCreatedAt(b.getCreatedAt());
-
         return r;
     }
 }
