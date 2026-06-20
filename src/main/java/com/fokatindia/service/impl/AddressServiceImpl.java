@@ -41,7 +41,7 @@ public class AddressServiceImpl implements AddressService {
 
         return addressRepository
                 .save(address)
-                .map(this::mapResponse);
+                .map(this::mapToResponse);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class AddressServiceImpl implements AddressService {
 
                     return addressRepository.save(address);
                 })
-                .map(this::mapResponse);
+                .map(this::mapToResponse);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class AddressServiceImpl implements AddressService {
 
         return addressRepository
                 .findById(addressId)
-                .map(this::mapResponse);
+                .map(this::mapToResponse);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class AddressServiceImpl implements AddressService {
 
         return addressRepository
                 .findByUserId(userId)
-                .map(this::mapResponse);
+                .map(this::mapToResponse);
     }
 
     @Override
@@ -91,7 +91,80 @@ public class AddressServiceImpl implements AddressService {
         return addressRepository.deleteById(addressId);
     }
 
-    private AddressResponse mapResponse(Address address) {
+
+
+    @Override
+    public Mono<AddressResponse> getDefaultAddress(
+            Long userId
+    ) {
+
+        return addressRepository
+
+                .findByUserIdAndIsDefault(
+                        userId,
+                        true
+                )
+
+                .switchIfEmpty(
+                        Mono.error(
+                                new RuntimeException(
+                                        "Default address not found"
+                                )
+                        )
+                )
+
+                .map(this::mapToResponse);
+    }
+
+
+    @Override
+    public Mono<AddressResponse> setDefaultAddress(
+            Long addressId
+    ) {
+
+        return addressRepository.findById(addressId)
+
+                .switchIfEmpty(
+                        Mono.error(
+                                new RuntimeException(
+                                        "Address not found"
+                                )
+                        )
+                )
+
+                .flatMap(address ->
+
+                        addressRepository
+                                .findByUserId(
+                                        address.getUserId()
+                                )
+
+                                .flatMap(existing -> {
+
+                                    existing.setIsDefault(false);
+
+                                    return addressRepository.save(
+                                            existing
+                                    );
+                                })
+
+                                .then(
+                                        Mono.defer(() -> {
+
+                                            address.setIsDefault(true);
+
+                                            return addressRepository.save(
+                                                    address
+                                            );
+                                        })
+                                )
+                )
+
+                .map(this::mapToResponse);
+    }
+
+
+    private AddressResponse mapToResponse(Address address) {
 
         return AddressResponse.builder()
                 .addressId(address.getAddressId())

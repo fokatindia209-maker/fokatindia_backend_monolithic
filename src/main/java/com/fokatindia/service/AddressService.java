@@ -19,4 +19,8 @@ public interface  AddressService {
     Flux<AddressResponse> getUserAddresses(Long userId);
 
     Mono<Void> deleteAddress(Long addressId);
+
+    Mono<AddressResponse> getDefaultAddress(Long userId);
+
+    Mono<AddressResponse> setDefaultAddress(Long addressId);
 }
