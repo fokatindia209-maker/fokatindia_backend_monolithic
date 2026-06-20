@@ -40,16 +40,9 @@ public class BookingServiceImpl implements BookingService {
                     booking.setSubVendorId(req.getSubVendorId());
                     booking.setCategoryId(req.getCategoryId());
                     booking.setServiceId(req.getServiceId());
-
+                    booking.setAddressId(req.getAddressId());
                     booking.setBookingDate(req.getBookingDate());
                     booking.setBookingTime(req.getBookingTime());
-
-                    booking.setAddress(req.getAddress());
-                    booking.setCity(req.getCity());
-                    booking.setPincode(req.getPincode());
-
-                    booking.setLatitude(req.getLatitude());
-                    booking.setLongitude(req.getLongitude());
 
                     booking.setAmount(req.getAmount());
                     booking.setDiscountAmount(req.getDiscountAmount());
@@ -208,7 +201,9 @@ public class BookingServiceImpl implements BookingService {
         r.setUserId(b.getUserId());
         r.setVendorId(b.getVendorId());
         r.setServiceId(b.getServiceId());
-
+        r.setSubVendorId(b.getSubVendorId());
+        r.setAddressId(b.getAddressId());
+        r.setCategoryId(b.getCategoryId());
         r.setBookingDate(b.getBookingDate());
         r.setBookingTime(b.getBookingTime());
 

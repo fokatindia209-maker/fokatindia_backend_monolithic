@@ -27,19 +27,11 @@ public class Booking {
 
     private Long serviceId;
 
+    private Long addressId;
+
     private LocalDate bookingDate;
 
     private String bookingTime;
-
-    private String address;
-
-    private String city;
-
-    private String pincode;
-
-    private Double latitude;
-
-    private Double longitude;
 
     private Double amount;
 

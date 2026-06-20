@@ -18,6 +18,13 @@ public class BookingResponse {
 
     private Long serviceId;
 
+
+    private Long subVendorId;
+
+    private Long categoryId;
+
+    private Long addressId;
+
     private LocalDate bookingDate;
 
     private String bookingTime;
