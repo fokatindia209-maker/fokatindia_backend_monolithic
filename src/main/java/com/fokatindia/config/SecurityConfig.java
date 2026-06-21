@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/restful/v1/api/bookings/**",
                                 "/restful/v1/api/notifications/**",
                                 "/restful/v1/api/payments/**",
+                                "/restful/v1/api/payments/user/**",
                                 "/restful/v1/api/reviews/**",
                                 "/restful/v1/api/addresses/**"
                         )
