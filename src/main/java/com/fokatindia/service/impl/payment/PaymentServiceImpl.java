@@ -59,10 +59,12 @@ try{
         Order order =
                 razorpay.orders.create(options);
 
-        String orderId = order.get("id");
         Payment payment = new Payment();
 
         BeanUtils.copyProperties(request, payment);
+    payment.setRazorpayOrderId(
+            order.get("id")
+    );
 
         payment.setPaymentStatus("PENDING");
         payment.setRefunded(false);
