@@ -23,4 +23,6 @@ public interface PaymentService {
     Mono<PaymentResponse> refund(Long id, Double amount);
 
     Mono<Void> delete(Long id);
+
+    Mono<PaymentResponse> verifyPayment(PaymentRequest request);
 }

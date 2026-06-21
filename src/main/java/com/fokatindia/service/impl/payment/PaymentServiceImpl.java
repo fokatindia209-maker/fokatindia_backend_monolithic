@@ -6,6 +6,7 @@ import com.fokatindia.dto.payment.PaymentResponse;
 import com.fokatindia.entity.payment.Payment;
 import com.fokatindia.repository.payment.PaymentRepository;
 import com.fokatindia.service.payment.PaymentService;
+import com.razorpay.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -13,12 +14,16 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository repository;
+
+    @Value("${razorpay.key-secret}")
+    private String razorpaySecret;
 
     @Override
     public Mono<PaymentResponse> create(PaymentRequest request) {
@@ -111,5 +116,65 @@ public class PaymentServiceImpl implements PaymentService {
         BeanUtils.copyProperties(payment, response);
 
         return response;
+    }
+
+
+    @Override
+    public Mono<PaymentResponse> verifyPayment(PaymentRequest request) {
+
+        return repository.findByRazorpayOrderId(
+                        request.getRazorpayOrderId()
+                )
+                .switchIfEmpty(
+                        Mono.error(
+                                new RuntimeException("Payment not found")
+                        )
+                )
+                .flatMap(payment -> {
+
+                    try {
+
+                        String payload =
+                                request.getRazorpayOrderId()
+                                        + "|"
+                                        + request.getRazorpayPaymentId();
+
+                        boolean verified = Utils.verifySignature(
+                                payload,
+                                request.getRazorpaySignature(),
+                                razorpaySecret
+                        );
+
+                        if (!verified) {
+                            return Mono.error(
+                                    new RuntimeException(
+                                            "Invalid payment signature"
+                                    )
+                            );
+                        }
+
+                        payment.setRazorpayPaymentId(
+                                request.getRazorpayPaymentId()
+                        );
+
+                        payment.setRazorpaySignature(
+                                request.getRazorpaySignature()
+                        );
+
+                        payment.setPaymentStatus("SUCCESS");
+                        payment.setUpdatedAt(LocalDateTime.now());
+
+                        return repository.save(payment);
+
+                    } catch (Exception e) {
+
+                        return Mono.error(
+                                new RuntimeException(
+                                        "Payment verification failed"
+                                )
+                        );
+                    }
+                })
+                .map(this::mapToResponse);
     }
 }

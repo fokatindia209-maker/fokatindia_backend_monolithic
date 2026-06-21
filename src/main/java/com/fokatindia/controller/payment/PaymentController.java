@@ -179,4 +179,20 @@ public class PaymentController {
                         "Deleted"
                 ));
     }
+
+
+    @PostMapping("/verify")
+    @PreAuthorize("hasAuthority('PAYMENT_CREATE')")
+    public Mono<ApiResponse<PaymentResponse>> verifyPayment(
+            @RequestBody PaymentRequest request
+    ) {
+
+        return service.verifyPayment(request)
+                .map(res -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Payment verified successfully",
+                        res
+                ));
+    }
 }

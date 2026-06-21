@@ -29,3 +29,8 @@ cloudinary:
   cloud-name: dgcjheuk7
   api-key: 766174979751285
   api-secret: lBRi4h7q8KG58Ntx-jdCni1SxLc
+
+
+razorpay:
+  key-id: rzp_test_T4CKLbZP75I7yH
+  key-secret: Dy5xidrhCQU1MwyaCG2ty5FO
