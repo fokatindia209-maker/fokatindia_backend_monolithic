@@ -6,8 +6,11 @@ import com.fokatindia.dto.payment.PaymentResponse;
 import com.fokatindia.entity.payment.Payment;
 import com.fokatindia.repository.payment.PaymentRepository;
 import com.fokatindia.service.payment.PaymentService;
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
 import com.razorpay.Utils;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -22,12 +25,41 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository repository;
 
+
+    @Value("${razorpay.key-id}")
+    private String razorpayKeyId;
+
+
     @Value("${razorpay.key-secret}")
     private String razorpaySecret;
 
     @Override
     public Mono<PaymentResponse> create(PaymentRequest request) {
 
+try{
+        RazorpayClient razorpay =
+                new RazorpayClient(
+                        razorpayKeyId,
+                        razorpaySecret
+                );
+
+
+        JSONObject options = new JSONObject();
+
+        options.put(
+                "amount",
+                (int) (request.getAmount() * 100)
+        );
+
+        options.put(
+                "currency",
+                request.getCurrency()
+        );
+
+        Order order =
+                razorpay.orders.create(options);
+
+        String orderId = order.get("id");
         Payment payment = new Payment();
 
         BeanUtils.copyProperties(request, payment);
@@ -39,6 +71,16 @@ public class PaymentServiceImpl implements PaymentService {
 
         return repository.save(payment)
                 .map(this::mapToResponse);
+
+    } catch (Exception e) {
+
+        return Mono.error(
+                new RuntimeException(
+                        "Unable to create Razorpay order",
+                        e
+                )
+        );
+    }
     }
 
     @Override
