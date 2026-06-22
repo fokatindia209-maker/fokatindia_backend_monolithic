@@ -16,9 +16,9 @@ public interface RoleRepository extends ReactiveCrudRepository<Role, Long> {
     @Query("""
     SELECT r.name
     FROM roles r
-    JOIN user_roles ur
-        ON ur.role_id = r.role_id
+    INNER JOIN user_roles ur ON ur.role_id = r.role_id
     WHERE ur.user_id = :userId
+    LIMIT 1
 """)
     Mono<String> findRoleNameByUserId(Long userId);
 

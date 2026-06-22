@@ -283,6 +283,8 @@ public class UserServiceImpl implements UserService {
                                                                     user.getInvitationCode()
                                                             );
 
+                                                            response.setRole(role); // ✅ HERE
+
                                                             return Mono.just(response);
                                                         });
                                             })
