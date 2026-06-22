@@ -14,4 +14,5 @@ public class UserResponse {
     private String status;
     private String documentStatus;
     private String invitationCode;
+    private String role;
 }
