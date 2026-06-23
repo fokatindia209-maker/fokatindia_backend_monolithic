@@ -17,6 +17,7 @@ public class ServiceRequest {
 
     private Double price;
     private Double discountedPrice;
+    private Double taxPercentage;
     private Integer durationMinutes;
 
     private String serviceCode;

@@ -47,6 +47,12 @@ public class ServiceSeriveImpl implements ServiceService {
 
                                     service.setPrice(request.getPrice());
                                     service.setDiscountedPrice(request.getDiscountedPrice());
+
+                                    service.setTaxPercentage(
+                                            request.getTaxPercentage() != null
+                                                    ? request.getTaxPercentage()
+                                                    : 18.0
+                                    );
                                     service.setDurationMinutes(request.getDurationMinutes());
 
                                     service.setImageUrl(imageUrl); // ✅ FROM CLOUDINARY
@@ -277,7 +283,9 @@ public class ServiceSeriveImpl implements ServiceService {
                                     existing.setFeatured(request.getFeatured());
                                     existing.setServiceType(request.getServiceType());
                                     existing.setUpdatedAt(LocalDateTime.now());
-
+                                    existing.setTaxPercentage(
+                                            request.getTaxPercentage()
+                                    );
                                     // =========================
                                     // IMAGE UPDATE LOGIC
                                     // =========================
@@ -405,6 +413,21 @@ public class ServiceSeriveImpl implements ServiceService {
             Category category
     ) {
 
+        Double discountedPrice =
+                service.getDiscountedPrice() != null
+                        ? service.getDiscountedPrice()
+                        : service.getPrice();
+
+        Double taxPercentage =
+                service.getTaxPercentage() != null
+                        ? service.getTaxPercentage()
+                        : 18.0;
+
+        Double taxAmount =
+                discountedPrice * taxPercentage / 100;
+
+        Double finalPrice =
+                discountedPrice + taxAmount;
         return ServiceResponse.builder()
                 .id(service.getId())
                 .categoryId(service.getCategoryId())
@@ -415,6 +438,9 @@ public class ServiceSeriveImpl implements ServiceService {
                 .discountedPrice(
                         service.getDiscountedPrice()
                 )
+                .taxPercentage(taxPercentage)
+                .taxAmount(taxAmount)
+                .finalPrice(finalPrice)
                 .durationMinutes(
                         service.getDurationMinutes()
                 )

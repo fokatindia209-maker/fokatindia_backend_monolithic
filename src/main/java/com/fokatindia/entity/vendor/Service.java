@@ -27,6 +27,9 @@ public class Service {
     // Discounted price
     private Double discountedPrice;
 
+    // GST %
+    private Double taxPercentage;
+
     // Service duration in minutes
     private Integer durationMinutes;
 

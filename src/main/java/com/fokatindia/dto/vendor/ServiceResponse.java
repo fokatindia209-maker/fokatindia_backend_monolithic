@@ -23,6 +23,12 @@ public class ServiceResponse {
 
     private Double discountedPrice;
 
+    private Double taxPercentage;
+
+    private Double taxAmount;
+
+    private Double finalPrice;
+
     private Integer durationMinutes;
 
     private String imageUrl;
