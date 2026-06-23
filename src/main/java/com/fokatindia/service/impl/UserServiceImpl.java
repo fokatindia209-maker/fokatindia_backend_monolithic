@@ -57,12 +57,12 @@ public class UserServiceImpl implements UserService {
         return createUserWithRole(request, "VENDOR");
     }
 
-    // ================= SUBVENDOR REGISTER =================
+    // ================= SUB_VENDOR REGISTER =================
 
     @Override
     public Mono<UserResponse> registerSubVendor(RegisterRequest request) {
 
-        return createUserWithRole(request, "SUBVENDOR");
+        return createUserWithRole(request, "SUB_VENDOR");
     }
 
     // ================= COMMON CORE LOGIC =================
@@ -103,9 +103,9 @@ public class UserServiceImpl implements UserService {
                                         );
                                     }
 
-                                    // ================= SUBVENDOR =================
+                                    // ================= SUB_VENDOR =================
 
-                                    if ("SUBVENDOR".equals(roleName)) {
+                                    if ("SUB_VENDOR".equals(roleName)) {
 
                                         return userRepository
 
