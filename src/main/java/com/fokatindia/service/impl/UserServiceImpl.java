@@ -7,10 +7,13 @@ import com.fokatindia.dto.UserResponse;
 import com.fokatindia.entity.Token;
 import com.fokatindia.entity.User;
 import com.fokatindia.entity.UserRole;
+import com.fokatindia.entity.vendor.SubVendor;
 import com.fokatindia.repository.RoleRepository;
 import com.fokatindia.repository.TokenRepository;
 import com.fokatindia.repository.UserRepository;
 import com.fokatindia.repository.UserRoleRepository;
+import com.fokatindia.repository.vendor.SubVendorRepository;
+import com.fokatindia.repository.vendor.VendorRepository;
 import com.fokatindia.security.JwtTokenProvider;
 import com.fokatindia.service.UserService;
 import com.fokatindia.service.vendor.DocumentService;
@@ -33,6 +36,12 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenRepository tokenRepository;
+
+
+    private final VendorRepository vendorRepository;
+    private final SubVendorRepository subVendorRepository;
+
+
     private final BCryptPasswordEncoder passwordEncoder =
             new BCryptPasswordEncoder();
 
@@ -272,20 +281,66 @@ public class UserServiceImpl implements UserService {
 
                                                         .flatMap(savedToken -> {
 
-                                                            UserResponse response =
-                                                                    mapToResponse(user, jwtToken, role);
+//                                                            UserResponse response =
+//                                                                    mapToResponse(user, jwtToken, role);
+//
+//                                                            response.setDocumentStatus(
+//                                                                    documentStatus
+//                                                            );
+//
+//                                                            response.setInvitationCode(
+//                                                                    user.getInvitationCode()
+//                                                            );
+//
+//                                                            response.setRole(role); // ✅ HERE
+//
+//                                                            return Mono.just(response);
 
-                                                            response.setDocumentStatus(
-                                                                    documentStatus
-                                                            );
 
-                                                            response.setInvitationCode(
-                                                                    user.getInvitationCode()
-                                                            );
+                                                            Mono<Long> vendorIdMono = Mono.just(0L);
+                                                            Mono<Long> subVendorIdMono = Mono.just(0L);
 
-                                                            response.setRole(role); // ✅ HERE
+                                                            if ("VENDOR".equals(role)) {
 
-                                                            return Mono.just(response);
+                                                                vendorIdMono = vendorRepository
+                                                                        .findByUserId(user.getUserId())
+                                                                        .map(v -> v.getVendorId())
+                                                                        .defaultIfEmpty(0L);
+                                                            }
+
+                                                            if ("SUB_VENDOR".equals(role)) {
+
+                                                                vendorIdMono = subVendorRepository
+                                                                        .findByUserId(user.getUserId())
+                                                                        .map(SubVendor::getVendorId)
+                                                                        .defaultIfEmpty(0L);
+
+                                                                subVendorIdMono = subVendorRepository
+                                                                        .findByUserId(user.getUserId())
+                                                                        .map(SubVendor::getSubVendorId)
+                                                                        .defaultIfEmpty(0L);
+                                                            }
+
+                                                            return Mono.zip(vendorIdMono, subVendorIdMono)
+
+                                                                    .map(tuple -> {
+
+                                                                        UserResponse response =
+                                                                                mapToResponse(user, jwtToken, role);
+
+                                                                        response.setVendorId(tuple.getT1());
+                                                                        response.setSubVendorId(tuple.getT2());
+
+                                                                        response.setDocumentStatus(documentStatus);
+
+                                                                        response.setInvitationCode(
+                                                                                user.getInvitationCode()
+                                                                        );
+
+                                                                        response.setRole(role);
+
+                                                                        return response;
+                                                                    });
                                                         });
                                             })
                             );
@@ -497,6 +552,8 @@ public class UserServiceImpl implements UserService {
 
         return new UserResponse(
                 user.getUserId(),
+                null,
+                null,
                 user.getName(),
                 user.getEmail(),
                 user.getPhone(),

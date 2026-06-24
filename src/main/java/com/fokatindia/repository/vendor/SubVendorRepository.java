@@ -6,6 +6,7 @@ import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 public interface SubVendorRepository  extends ReactiveCrudRepository<SubVendor, Long> {
@@ -13,7 +14,7 @@ public interface SubVendorRepository  extends ReactiveCrudRepository<SubVendor, 
 
     Flux<SubVendor> findByVendorId(Long vendorId);
 
-    Flux<SubVendor> findByUserId(Long userId);
+    Mono<SubVendor> findByUserId(Long userId);
 
     @Query("""
 SELECT
