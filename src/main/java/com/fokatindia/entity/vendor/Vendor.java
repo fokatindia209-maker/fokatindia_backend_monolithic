@@ -13,16 +13,11 @@ public class Vendor {
     @Id
     private Long vendorId;
 
-    // Reference from users table
     private Long userId;
 
     private String businessName;
 
     private String gstNumber;
-
-//    private String address;
-//
-//    private String city;
 
     private String serviceArea;
 

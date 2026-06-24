@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface VendorRepository extends ReactiveCrudRepository<Vendor, Long> {
     Mono<Vendor> findByUserId(Long userId);
+    Flux<Vendor> findByVendorId(Long vendorId);
     @Query("""
 SELECT
       v.vendor_id AS vendor_id,

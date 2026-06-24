@@ -82,6 +82,13 @@ public class CategoryServiceImpl   implements CategoryService {
     }
 
 
+    public Flux<CategoryResponse> getByVendorId(Long vendorId) {
+
+        return repository.findByVendorId(vendorId)
+                .map(this::mapToResponse);
+    }
+
+
 
 
 

@@ -19,4 +19,7 @@ public interface CategoryService {
 
     Mono<Void> delete(Long id);
 
+    Flux<CategoryResponse> getByVendorId(Long vendorId);
+
+
 }

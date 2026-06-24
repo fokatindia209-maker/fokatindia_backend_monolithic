@@ -172,4 +172,19 @@ public class CategoryController {
     }
 
 
+    @PreAuthorize("hasAuthority('CATEGORY_VIEW')")
+    @GetMapping("/vendors/{vendorId}")
+    public Mono<ApiResponse<List<CategoryResponse>>> get(@PathVariable Long vendorId) {
+
+        return service.getByVendorId(vendorId)
+                .collectList()
+                .map(res -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Categories fetched successfully",
+                        res
+                ));
+    }
+
+
 }
