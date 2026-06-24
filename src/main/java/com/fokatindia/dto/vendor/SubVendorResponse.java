@@ -16,6 +16,13 @@ public class SubVendorResponse {
     private Long vendorId;
 
     private String specialization;
+
+    private Double latitude;
+    private Double longitude;
+    private Double serviceRadiusKm;
+    private Double distanceKm;
+
+
     private Integer experienceYears;
     private String availabilityStatus;
     private Double rating;
@@ -28,9 +35,7 @@ public class SubVendorResponse {
     private String status;
 
 
-    private Double latitude;
-    private Double longitude;
-    private Double distanceKm;
+
 
     public SubVendorResponse(
             Long userId,

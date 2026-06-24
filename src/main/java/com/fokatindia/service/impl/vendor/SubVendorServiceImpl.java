@@ -44,6 +44,12 @@ public class SubVendorServiceImpl implements SubVendorService {
                     subVendor.setSpecialization(
                             request.getSpecialization()
                     );
+
+                    subVendor.setLatitude(request.getLatitude());
+                    subVendor.setLongitude(request.getLongitude());
+                    subVendor.setServiceRadiusKm(request.getServiceRadiusKm());
+
+
                     subVendor.setExperienceYears(
                             request.getExperienceYears()
                     );
@@ -82,7 +88,6 @@ public class SubVendorServiceImpl implements SubVendorService {
         return subVendorRepository.findSubVendorsWithUser(vendorId).flatMap(this::mapToResponse);
     }
 
-
     @Override
     public Flux<SubVendorResponse> getSubVendorByServiceId(
             Long serviceId,
@@ -91,11 +96,12 @@ public class SubVendorServiceImpl implements SubVendorService {
     ) {
 
         return subVendorRepository.findByServiceId(serviceId)
-                .filter(subVendor -> {
+
+                .flatMap(subVendor -> {
 
                     if (subVendor.getLatitude() == null ||
                             subVendor.getLongitude() == null) {
-                        return false;
+                        return Mono.empty();
                     }
 
                     double distance = distanceKm(
@@ -105,14 +111,61 @@ public class SubVendorServiceImpl implements SubVendorService {
                             subVendor.getLongitude()
                     );
 
-                    double radius = subVendor.getServiceRadiusKm() == null
-                            ? 10
-                            : subVendor.getServiceRadiusKm();
+                    double radius =
+                            subVendor.getServiceRadiusKm() == null
+                                    ? 10.0
+                                    : subVendor.getServiceRadiusKm();
 
-                    return distance <= radius;
+                    if (distance > radius) {
+                        return Mono.empty();
+                    }
+
+                    return mapToResponse(subVendor)
+                            .map(response -> {
+                                response.setDistanceKm(distance);
+                                return response;
+                            });
                 })
-                .flatMap(this::mapToResponse);
+
+                .sort((a, b) ->
+                        Double.compare(
+                                a.getDistanceKm(),
+                                b.getDistanceKm()
+                        )
+                );
     }
+
+
+//    @Override
+//    public Flux<SubVendorResponse> getSubVendorByServiceId(
+//            Long serviceId,
+//            Double lat,
+//            Double lng
+//    ) {
+//
+//        return subVendorRepository.findByServiceId(serviceId)
+//                .filter(subVendor -> {
+//
+//                    if (subVendor.getLatitude() == null ||
+//                            subVendor.getLongitude() == null) {
+//                        return false;
+//                    }
+//
+//                    double distance = distanceKm(
+//                            lat,
+//                            lng,
+//                            subVendor.getLatitude(),
+//                            subVendor.getLongitude()
+//                    );
+//
+//                    double radius = subVendor.getServiceRadiusKm() == null
+//                            ? 10
+//                            : subVendor.getServiceRadiusKm();
+//
+//                    return distance <= radius;
+//                })
+//                .flatMap(this::mapToResponse);
+//    }
 
     @Override
     public Mono<SubVendorResponse> getSubVendorBySubVendorId(Long subVendorId) {
@@ -156,6 +209,18 @@ public class SubVendorServiceImpl implements SubVendorService {
                         );
                     }
 
+                    if (request.getLatitude() != null) {
+                        subVendor.setLatitude(request.getLatitude());
+                    }
+
+                    if (request.getLongitude() != null) {
+                        subVendor.setLongitude(request.getLongitude());
+                    }
+
+                    if (request.getServiceRadiusKm() != null) {
+                        subVendor.setServiceRadiusKm(request.getServiceRadiusKm());
+                    }
+
                     if (request.getExperienceYears() != null) {
 
                         subVendor.setExperienceYears(
@@ -195,39 +260,106 @@ public class SubVendorServiceImpl implements SubVendorService {
     // =====================================================
     // MAPPER (SubVendor + User)
     // =====================================================
+//    private Mono<SubVendorResponse> mapToResponse(SubVendor subVendor) {
+//
+//        return userRepository.findById(subVendor.getUserId())
+//                .map(user -> new SubVendorResponse(
+//                        subVendor.getUserId(),
+//                        subVendor.getSubVendorId(),
+//                        subVendor.getVendorId(),
+//                        subVendor.getSpecialization(),
+//                        subVendor.getExperienceYears(),
+//                        subVendor.getAvailabilityStatus(),
+//                        subVendor.getRating(),
+//                        subVendor.getCreatedAt(),
+//
+//                        response.setLatitude(
+//                                subVendor.getLatitude()
+//                        );
+//
+//        response.setLongitude(
+//                subVendor.getLongitude()
+//        );
+//
+//        response.setServiceRadiusKm(
+//                subVendor.getServiceRadiusKm()
+//        );
+//
+//
+//                        user.getName(),
+//                        user.getEmail(),
+//                        user.getPhone(),
+//                        user.getStatus()
+//                ))
+//                .switchIfEmpty(
+//                        Mono.just(new SubVendorResponse(
+//                                subVendor.getUserId(),
+//                                subVendor.getSubVendorId(),
+//                                subVendor.getVendorId(),
+//                                subVendor.getSpecialization(),
+//                                subVendor.getExperienceYears(),
+//                                subVendor.getAvailabilityStatus(),
+//                                subVendor.getRating(),
+//                                subVendor.getCreatedAt(),
+//                                null,
+//                                null,
+//                                null,
+//                                null
+//                        ))
+//                );
+//    }
+
     private Mono<SubVendorResponse> mapToResponse(SubVendor subVendor) {
 
         return userRepository.findById(subVendor.getUserId())
-                .map(user -> new SubVendorResponse(
-                        subVendor.getUserId(),
-                        subVendor.getSubVendorId(),
-                        subVendor.getVendorId(),
-                        subVendor.getSpecialization(),
-                        subVendor.getExperienceYears(),
-                        subVendor.getAvailabilityStatus(),
-                        subVendor.getRating(),
-                        subVendor.getCreatedAt(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getPhone(),
-                        user.getStatus()
-                ))
-                .switchIfEmpty(
-                        Mono.just(new SubVendorResponse(
-                                subVendor.getUserId(),
-                                subVendor.getSubVendorId(),
-                                subVendor.getVendorId(),
-                                subVendor.getSpecialization(),
-                                subVendor.getExperienceYears(),
-                                subVendor.getAvailabilityStatus(),
-                                subVendor.getRating(),
-                                subVendor.getCreatedAt(),
-                                null,
-                                null,
-                                null,
-                                null
-                        ))
-                );
+                .map(user -> {
+
+                    SubVendorResponse response =
+                            new SubVendorResponse();
+
+                    response.setUserId(subVendor.getUserId());
+                    response.setSubVendorId(subVendor.getSubVendorId());
+                    response.setVendorId(subVendor.getVendorId());
+
+                    response.setSpecialization(
+                            subVendor.getSpecialization()
+                    );
+
+                    response.setExperienceYears(
+                            subVendor.getExperienceYears()
+                    );
+
+                    response.setAvailabilityStatus(
+                            subVendor.getAvailabilityStatus()
+                    );
+
+                    response.setRating(
+                            subVendor.getRating()
+                    );
+
+                    response.setCreatedAt(
+                            subVendor.getCreatedAt()
+                    );
+
+                    response.setLatitude(
+                            subVendor.getLatitude()
+                    );
+
+                    response.setLongitude(
+                            subVendor.getLongitude()
+                    );
+
+                    response.setServiceRadiusKm(
+                            subVendor.getServiceRadiusKm()
+                    );
+
+                    response.setName(user.getName());
+                    response.setEmail(user.getEmail());
+                    response.setPhone(user.getPhone());
+                    response.setStatus(user.getStatus());
+
+                    return response;
+                });
     }
 
 
