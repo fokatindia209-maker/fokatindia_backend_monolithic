@@ -10,7 +10,7 @@ public interface BookingRepository extends ReactiveCrudRepository<Booking, Long>
     Flux<Booking> findByUserId(Long userId);
 
     Flux<Booking> findByVendorId(Long vendorId);
-
+    Flux<Booking> findBySubVendorId(Long subVendorId);
     Flux<Booking> findByBookingStatus(String bookingStatus);
 
     Flux<Booking> findByPaymentStatus(String paymentStatus);

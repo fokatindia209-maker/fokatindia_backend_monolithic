@@ -22,4 +22,10 @@ public interface BookingService {
     Mono<BookingResponse> cancel(Long id);
 
     Mono<Void> delete(Long id);
+
+    Flux<BookingResponse> getByVendorId(Long vendorId);
+
+
+    Flux<BookingResponse> getBySubVendorId(Long subVendorId);
+
 }

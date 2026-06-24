@@ -104,6 +104,40 @@ public class BookingController {
                 ));
     }
 
+
+    @PreAuthorize("hasAuthority('BOOKING_VIEW')")
+    @GetMapping("/vendor/{vendorId}")
+    public Mono<ApiResponse<List<BookingResponse>>> getByVendorId(
+            @PathVariable Long vendorId
+    ) {
+
+        return service.getByVendorId(vendorId)
+                .collectList()
+                .map(list -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "User bookings fetched successfully",
+                        list
+                ));
+    }
+
+
+    @PreAuthorize("hasAuthority('BOOKING_VIEW')")
+    @GetMapping("/subVendor/{subVendorId}")
+    public Mono<ApiResponse<List<BookingResponse>>> getBySubVendorId(
+            @PathVariable Long subVendorId
+    ) {
+
+        return service.getBySubVendorId(subVendorId)
+                .collectList()
+                .map(list -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "User bookings fetched successfully",
+                        list
+                ));
+    }
+
     // =====================================================
     // UPDATE STATUS (BOOKING / PAYMENT)
     // =====================================================

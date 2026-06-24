@@ -100,6 +100,21 @@ public class BookingServiceImpl implements BookingService {
                 .map(this::mapToResponse);
     }
 
+    @Override
+    public Flux<BookingResponse> getByVendorId(Long vendorId) {
+
+        return repository.findByVendorId(vendorId)
+                .map(this::mapToResponse);
+    }
+
+    @Override
+    public Flux<BookingResponse> getBySubVendorId(Long subVendorId) {
+
+        return repository.findBySubVendorId(subVendorId)
+                .map(this::mapToResponse);
+    }
+
+
     // =====================================================
     // GET BY VENDOR
     // =====================================================
