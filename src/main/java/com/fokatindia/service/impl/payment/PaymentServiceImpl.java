@@ -4,6 +4,7 @@ package com.fokatindia.service.impl.payment;
 import com.fokatindia.dto.payment.PaymentRequest;
 import com.fokatindia.dto.payment.PaymentResponse;
 import com.fokatindia.entity.payment.Payment;
+import com.fokatindia.repository.booking.BookingRepository;
 import com.fokatindia.repository.payment.PaymentRepository;
 import com.fokatindia.service.payment.PaymentService;
 import com.razorpay.Order;
@@ -24,6 +25,8 @@ import org.springframework.beans.factory.annotation.Value;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository repository;
+
+    private final BookingRepository bookingRepository;
 
 
     @Value("${razorpay.key-id}")
@@ -208,7 +211,24 @@ try{
                         payment.setPaymentStatus("SUCCESS");
                         payment.setUpdatedAt(LocalDateTime.now());
 
-                        return repository.save(payment);
+//                        return repository.save(payment);
+
+                        return repository.save(payment)
+
+                                // =========================
+                                // UPDATE BOOKING ALSO
+                                // =========================
+                                .flatMap(savedPayment -> {
+
+                                    return bookingRepository.findById(savedPayment.getBookingId())
+                                            .flatMap(booking -> {
+
+                                                booking.setPaymentStatus("SUCCESS");
+
+                                                return bookingRepository.save(booking);
+                                            })
+                                            .thenReturn(savedPayment);
+                                });
 
                     } catch (Exception e) {
 

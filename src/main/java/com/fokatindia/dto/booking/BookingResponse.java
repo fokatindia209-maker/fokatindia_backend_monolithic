@@ -32,10 +32,18 @@ public class BookingResponse {
     private Double finalAmount;
 
     private String bookingStatus;
-
     private String paymentStatus;
+
+
     private String notes;
     private String otp;
     private Boolean active;
     private LocalDateTime createdAt;
+
+    // ========= EARNINGS =========
+    private Double companyAmount;
+    private Double vendorAmount;
+    private Double subVendorAmount;
+
+    private Boolean earningsGenerated;
 }

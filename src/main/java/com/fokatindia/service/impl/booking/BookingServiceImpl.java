@@ -149,6 +149,20 @@ public class BookingServiceImpl implements BookingService {
                         b.setPaymentStatus(paymentStatus);
                     }
 
+                    // Generate earnings once
+
+                    // =========================
+                    // EARNINGS GENERATION
+                    // =========================
+                    if (
+                            "COMPLETED".equalsIgnoreCase(b.getBookingStatus()) &&
+                                    "SUCCESS".equalsIgnoreCase(b.getPaymentStatus()) &&
+                                    !Boolean.TRUE.equals(b.getEarningsGenerated())
+                    ) {
+                        calculateEarnings(b);
+                        b.setEarningsGenerated(true);
+                    }
+
                     b.setUpdatedAt(LocalDateTime.now());
 
                     return repository.save(b);
@@ -222,6 +236,10 @@ public class BookingServiceImpl implements BookingService {
         r.setBookingDate(b.getBookingDate());
         r.setBookingTime(b.getBookingTime());
         r.setFinalAmount(b.getFinalAmount());
+        r.setCompanyAmount(b.getCompanyAmount());
+        r.setVendorAmount(b.getVendorAmount());
+        r.setSubVendorAmount(b.getSubVendorAmount());
+        r.setEarningsGenerated(b.getEarningsGenerated());
         r.setBookingStatus(b.getBookingStatus());
         r.setPaymentStatus(b.getPaymentStatus());
         r.setOtp(b.getOtp());
@@ -229,5 +247,15 @@ public class BookingServiceImpl implements BookingService {
         r.setActive(b.getActive());
         r.setCreatedAt(b.getCreatedAt());
         return r;
+    }
+
+
+    private void calculateEarnings(Booking booking) {
+
+        double amount = booking.getFinalAmount();
+
+        booking.setCompanyAmount(amount * 0.35);
+        booking.setVendorAmount(amount * 0.60);
+        booking.setSubVendorAmount(amount * 0.5);
     }
 }

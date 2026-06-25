@@ -39,6 +39,13 @@ public class Booking {
 
     private Double finalAmount;
 
+
+    private Double companyAmount;
+
+    private Double vendorAmount;
+
+    private Double subVendorAmount;
+
     private String paymentStatus;
 
     private String bookingStatus;
@@ -52,4 +59,6 @@ public class Booking {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private Boolean earningsGenerated;
 }
