@@ -19,12 +19,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
-
     private final BookingRepository repository;
-
-    // =====================================================
-    // CREATE BOOKING
-    // =====================================================
     @Override
     public Mono<BookingResponse> create(BookingRequest request) {
 
