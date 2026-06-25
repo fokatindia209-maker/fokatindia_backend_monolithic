@@ -9,6 +9,7 @@ import com.fokatindia.exception.ResourceNotFoundException;
 import com.fokatindia.repository.booking.BookingRepository;
 import com.fokatindia.service.booking.BookingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -154,6 +156,10 @@ public class BookingServiceImpl implements BookingService {
                         calculateEarnings(b);
                         b.setEarningsGenerated(true);
                     }
+
+                    log.info(b.getBookingStatus());
+                    log.info(b.getPaymentStatus());
+                    log.info(String.valueOf(b.getEarningsGenerated()));
 
                     b.setUpdatedAt(LocalDateTime.now());
 
