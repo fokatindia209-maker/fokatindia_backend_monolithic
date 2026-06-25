@@ -50,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
 
                     booking.setNotes(req.getNotes());
 
-                    booking.setBookingStatus("PENDING");
+                    booking.setBookingStatus("SUCCESS");
                     booking.setPaymentStatus("PENDING");
                     booking.setActive(true);
                     String otp = String.valueOf((int)(Math.random() * 9000) + 1000);
