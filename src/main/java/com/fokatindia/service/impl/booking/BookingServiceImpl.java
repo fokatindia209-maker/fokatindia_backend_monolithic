@@ -43,13 +43,10 @@ public class BookingServiceImpl implements BookingService {
                     booking.setAddressId(req.getAddressId());
                     booking.setBookingDate(req.getBookingDate());
                     booking.setBookingTime(req.getBookingTime());
-
                     booking.setAmount(req.getAmount());
                     booking.setDiscountAmount(req.getDiscountAmount());
                     booking.setFinalAmount(req.getFinalAmount());
-
                     booking.setNotes(req.getNotes());
-
                     booking.setBookingStatus("SUCCESS");
                     booking.setPaymentStatus("PENDING");
                     booking.setActive(true);
