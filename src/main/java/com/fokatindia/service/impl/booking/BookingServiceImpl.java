@@ -253,9 +253,16 @@ public class BookingServiceImpl implements BookingService {
     private void calculateEarnings(Booking booking) {
 
         double amount = booking.getFinalAmount();
+        double company = amount * 0.30;   // 20%
+        double vendor = amount * 0.60;    // 70%
+        double subVendor = amount * 0.10; // 10%
 
-        booking.setCompanyAmount(amount * 0.35);
-        booking.setVendorAmount(amount * 0.60);
-        booking.setSubVendorAmount(amount * 0.5);
+        booking.setCompanyAmount(company);
+        booking.setVendorAmount(vendor);
+        booking.setSubVendorAmount(subVendor);
+
+
+        log.info("💰 Earnings Calculated -> company={}, vendor={}, subVendor={}",
+                company, vendor, subVendor);
     }
 }
