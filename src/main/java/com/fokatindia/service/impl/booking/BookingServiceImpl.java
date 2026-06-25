@@ -135,6 +135,10 @@ public class BookingServiceImpl implements BookingService {
 
                 .flatMap(b -> {
 
+                    log.info("Booking Status: {}", b.getBookingStatus());
+                    log.info("Payment Status: {}", b.getPaymentStatus());
+                    log.info("Earnings Generated: {}", b.getEarningsGenerated());
+
                     if (bookingStatus != null) {
                         b.setBookingStatus(bookingStatus);
                     }
@@ -157,9 +161,7 @@ public class BookingServiceImpl implements BookingService {
                         b.setEarningsGenerated(true);
                     }
 
-                    log.info("Booking Status: {}", b.getBookingStatus());
-                    log.info("Payment Status: {}", b.getPaymentStatus());
-                    log.info("Earnings Generated: {}", b.getEarningsGenerated());
+
 
                     b.setUpdatedAt(LocalDateTime.now());
 
