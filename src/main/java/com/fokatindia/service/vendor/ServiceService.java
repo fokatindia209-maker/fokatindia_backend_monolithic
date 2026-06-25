@@ -17,4 +17,7 @@ public interface ServiceService {
     Mono<ServiceResponse> update(Long id, ServiceRequest request);
 
     Mono<Void> delete(Long id);
+    Flux<ServiceResponse> getByVendorId(Long vendorId);
+
+
 }

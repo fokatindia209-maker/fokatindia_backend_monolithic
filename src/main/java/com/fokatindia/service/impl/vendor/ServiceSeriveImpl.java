@@ -1,6 +1,7 @@
 package com.fokatindia.service.impl.vendor;
 
 
+import com.fokatindia.dto.vendor.CategoryResponse;
 import com.fokatindia.dto.vendor.ServiceRequest;
 import com.fokatindia.dto.vendor.ServiceResponse;
 import com.fokatindia.entity.vendor.Category;
@@ -309,77 +310,6 @@ public class ServiceSeriveImpl implements ServiceService {
                                 })
                 );
     }
-//    @Override
-//    public Mono<ServiceResponse> update(
-//            Long id,
-//            ServiceRequest request
-//    ) {
-//
-//        return repository.findById(id)
-//
-//                .switchIfEmpty(
-//                        Mono.error(
-//                                new ResourceNotFoundException(
-//                                        "Service not found"
-//                                )
-//                        )
-//                )
-//
-//                .flatMap(service -> {
-//
-//                    service.setName(
-//                            request.getName()
-//                    );
-//
-//                    service.setDescription(
-//                            request.getDescription()
-//                    );
-//
-//                    service.setPrice(
-//                            request.getPrice()
-//                    );
-//
-//                    service.setDiscountedPrice(
-//                            request.getDiscountedPrice()
-//                    );
-//
-//                    service.setDurationMinutes(
-//                            request.getDurationMinutes()
-//                    );
-//
-//                    service.setImageUrl(
-//                            request.getImageUrl()
-//                    );
-//
-//                    service.setFeatured(
-//                            request.getFeatured()
-//                    );
-//
-//                    service.setServiceType(
-//                            request.getServiceType()
-//                    );
-//
-//                    service.setUpdatedAt(
-//                            LocalDateTime.now()
-//                    );
-//
-//                    return repository.save(service);
-//                })
-//
-//                .flatMap(saved ->
-//
-//                        categoryRepository.findById(
-//                                        saved.getCategoryId()
-//                                )
-//
-//                                .map(category ->
-//                                        mapToResponse(
-//                                                saved,
-//                                                category
-//                                        )
-//                                )
-//                );
-//    }
 
     // =====================================================
     // DELETE SERVICE
@@ -401,6 +331,26 @@ public class ServiceSeriveImpl implements ServiceService {
                 )
 
                 .flatMap(repository::delete);
+    }
+
+
+    public Flux<ServiceResponse> getByVendorId(Long vendorId) {
+
+        return repository.findByVendorId(vendorId)
+
+                .flatMap(service ->
+
+                        categoryRepository.findById(
+                                        service.getCategoryId()
+                                )
+
+                                .map(category ->
+                                        mapToResponse(
+                                                service,
+                                                category
+                                        )
+                                )
+                );
     }
 
 

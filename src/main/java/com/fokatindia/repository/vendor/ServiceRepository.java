@@ -1,6 +1,8 @@
 package com.fokatindia.repository.vendor;
 
+import com.fokatindia.entity.vendor.Category;
 import com.fokatindia.entity.vendor.Service;
+import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 
@@ -12,4 +14,16 @@ public interface ServiceRepository
     Flux<Service> findByActiveTrue();
 
     Flux<Service> findByFeaturedTrue();
+
+
+    @Query("""
+    SELECT s.*
+    FROM service_categories s
+    INNER JOIN vendor_services vs
+        ON vs.service_id = s.id
+    WHERE vs.vendor_id = :vendorId
+      AND vs.active = true
+      AND s.active = true
+""")
+    Flux<Service> findByVendorId(Long vendorId);
 }

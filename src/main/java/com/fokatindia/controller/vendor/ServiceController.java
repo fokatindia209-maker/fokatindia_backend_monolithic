@@ -3,6 +3,7 @@ package com.fokatindia.controller.vendor;
 
 
 import com.fokatindia.dto.ApiResponse;
+import com.fokatindia.dto.vendor.CategoryResponse;
 import com.fokatindia.dto.vendor.ServiceRequest;
 import com.fokatindia.dto.vendor.ServiceResponse;
 import com.fokatindia.service.vendor.ServiceService;
@@ -102,6 +103,20 @@ public class ServiceController {
                                 res
                         )
                 );
+    }
+
+    @PreAuthorize("hasAuthority('SERVICE_VIEW')")
+    @GetMapping("/vendors/{vendorId}")
+    public Mono<ApiResponse<List<ServiceResponse>>> get(@PathVariable Long vendorId) {
+
+        return service.getByVendorId(vendorId)
+                .collectList()
+                .map(res -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Services fetched successfully",
+                        res
+                ));
     }
 
     // =====================================================
