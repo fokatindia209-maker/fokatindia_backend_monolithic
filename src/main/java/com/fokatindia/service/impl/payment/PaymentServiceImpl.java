@@ -6,6 +6,7 @@ import com.fokatindia.dto.payment.PaymentResponse;
 import com.fokatindia.entity.payment.Payment;
 import com.fokatindia.repository.booking.BookingRepository;
 import com.fokatindia.repository.payment.PaymentRepository;
+import com.fokatindia.service.booking.BookingService;
 import com.fokatindia.service.payment.PaymentService;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
@@ -27,7 +28,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository repository;
 
     private final BookingRepository bookingRepository;
-
+    private final BookingService bookingService;
 
     @Value("${razorpay.key-id}")
     private String razorpayKeyId;
@@ -218,17 +219,27 @@ try{
                                 // =========================
                                 // UPDATE BOOKING ALSO
                                 // =========================
-                                .flatMap(savedPayment -> {
+                                .flatMap(savedPayment ->
 
-                                    return bookingRepository.findById(savedPayment.getBookingId())
-                                            .flatMap(booking -> {
+//                                    return bookingRepository.findById(savedPayment.getBookingId())
+//                                            .flatMap(booking -> {
+//
+//                                                booking.setPaymentStatus("SUCCESS");
+//
+//                                                return bookingRepository.save(booking);
+//                                            })
+//                                            .thenReturn(savedPayment);
 
-                                                booking.setPaymentStatus("SUCCESS");
+                                        // ✅ FINAL FIX: SINGLE SOURCE OF TRUTH
 
-                                                return bookingRepository.save(booking);
-                                            })
-                                            .thenReturn(savedPayment);
-                                });
+
+                                                bookingService.updateStatus(
+                                                                savedPayment.getBookingId(),
+                                                                "SUCCESS",
+                                                                "SUCCESS"
+                                                        )
+                                                        .thenReturn(savedPayment)
+                                );
 
                     } catch (Exception e) {
 
