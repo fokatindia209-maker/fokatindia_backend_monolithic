@@ -52,10 +52,6 @@ public class BookingServiceImpl implements BookingService {
                     booking.setUpdatedAt(LocalDateTime.now());
 
                     // 🔥 PROPER LOGGING INSIDE FLOW
-                    log.debug("Booking Status: {}", booking.getBookingStatus());
-                    log.debug("Payment Status: {}", booking.getPaymentStatus());
-                    log.debug("Final Amount: {}", booking.getFinalAmount());
-
                     return repository.save(booking);
                 })
                 .map(this::mapToResponse);
@@ -138,9 +134,9 @@ public class BookingServiceImpl implements BookingService {
                 )
 
                 .flatMap(b -> {
-                    log.info("Booking Status: {}", b.getBookingStatus());
-                    log.info("Payment Status: {}", b.getPaymentStatus());
-                    log.info("Earnings Generated: {}", b.getEarningsGenerated());
+                    log.info("Booking1 Status: {}", b.getBookingStatus());
+                    log.info("Booking1 Status: {}", b.getPaymentStatus());
+                    log.info("Booking1 Generated: {}", b.getEarningsGenerated());
 
                     if (bookingStatus != null) {
                         b.setBookingStatus(bookingStatus);
