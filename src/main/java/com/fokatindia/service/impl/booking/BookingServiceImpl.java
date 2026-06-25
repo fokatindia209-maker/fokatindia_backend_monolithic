@@ -255,8 +255,8 @@ public class BookingServiceImpl implements BookingService {
 
         double amount = booking.getFinalAmount();
         double company = amount * 0.30;   // 20%
-        double vendor = amount * 0.60;    // 70%
-        double subVendor = amount * 0.10; // 10%
+        double subVendor = amount * 0.60;    // 70%
+        double vendor = amount * 0.10; // 10%
 
         booking.setCompanyAmount(company);
         booking.setVendorAmount(vendor);
