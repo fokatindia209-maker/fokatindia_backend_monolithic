@@ -147,7 +147,7 @@ public class BookingServiceImpl implements BookingService {
                     // EARNINGS GENERATION
                     // =========================
                     if (
-                            "COMPLETED".equalsIgnoreCase(b.getBookingStatus()) &&
+                            "SUCCESS".equalsIgnoreCase(b.getBookingStatus()) &&
                                     "SUCCESS".equalsIgnoreCase(b.getPaymentStatus()) &&
                                     !Boolean.TRUE.equals(b.getEarningsGenerated())
                     ) {
