@@ -8,10 +8,6 @@ spring:
     init:
       mode: never
 
-logging:
-  level:
-    org.springframework.security: INFO
-    org.springframework.r2dbc: INFO
 
 management:
   endpoints:
@@ -31,3 +27,5 @@ cloudinary:
 razorpay:
   key-id: ${RAZORPAY_KEY_ID}
   key-secret: ${RAZORPAY_KEY_SECRET}
+
+

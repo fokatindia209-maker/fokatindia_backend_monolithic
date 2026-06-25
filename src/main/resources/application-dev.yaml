@@ -9,10 +9,6 @@ spring:
       mode: never
 
 
-logging:
-  level:
-    org.springframework.security: DEBUG
-    org.springframework.r2dbc: DEBUG
 
 management:
   endpoints:

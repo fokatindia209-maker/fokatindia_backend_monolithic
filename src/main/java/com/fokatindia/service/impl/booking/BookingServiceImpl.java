@@ -157,9 +157,9 @@ public class BookingServiceImpl implements BookingService {
                         b.setEarningsGenerated(true);
                     }
 
-                    log.info(b.getBookingStatus());
-                    log.info(b.getPaymentStatus());
-                    log.info(String.valueOf(b.getEarningsGenerated()));
+                    log.info("Booking Status: {}", b.getBookingStatus());
+                    log.info("Payment Status: {}", b.getPaymentStatus());
+                    log.info("Earnings Generated: {}", b.getEarningsGenerated());
 
                     b.setUpdatedAt(LocalDateTime.now());
 

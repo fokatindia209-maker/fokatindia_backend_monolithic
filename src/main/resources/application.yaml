@@ -21,8 +21,9 @@ jwt:
 
 logging:
   level:
-    org.springframework.security: INFO
-    org.springframework.r2dbc: INFO
+    root: INFO
+    com.fokatindia: DEBUG
+
 
 management:
   endpoints:
