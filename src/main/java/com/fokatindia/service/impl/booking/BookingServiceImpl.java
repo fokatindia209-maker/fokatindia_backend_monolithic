@@ -24,7 +24,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository repository;
     @Override
     public Mono<BookingResponse> create(BookingRequest request) {
-
         return Mono.just(request)
                 .flatMap(req -> {
 
@@ -51,6 +50,11 @@ public class BookingServiceImpl implements BookingService {
                     booking.setOtp(otp);
                     booking.setCreatedAt(LocalDateTime.now());
                     booking.setUpdatedAt(LocalDateTime.now());
+
+                    // 🔥 PROPER LOGGING INSIDE FLOW
+                    log.debug("Booking Status: {}", booking.getBookingStatus());
+                    log.debug("Payment Status: {}", booking.getPaymentStatus());
+                    log.debug("Final Amount: {}", booking.getFinalAmount());
 
                     return repository.save(booking);
                 })
@@ -134,7 +138,6 @@ public class BookingServiceImpl implements BookingService {
                 )
 
                 .flatMap(b -> {
-
                     log.info("Booking Status: {}", b.getBookingStatus());
                     log.info("Payment Status: {}", b.getPaymentStatus());
                     log.info("Earnings Generated: {}", b.getEarningsGenerated());

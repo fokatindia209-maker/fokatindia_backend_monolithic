@@ -23,6 +23,8 @@ logging:
   level:
     root: INFO
     com.fokatindia: DEBUG
+    org.springframework.web: INFO
+    reactor.netty.http.server: DEBUG
 
 
 management:
