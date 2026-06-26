@@ -107,7 +107,7 @@ public class ServiceController {
 
     @PreAuthorize("hasAuthority('SERVICE_VIEW')")
     @GetMapping("/vendors/{vendorId}")
-    public Mono<ApiResponse<List<ServiceResponse>>> get(@PathVariable Long vendorId) {
+    public Mono<ApiResponse<List<ServiceResponse>>> getByVendorId(@PathVariable Long vendorId) {
 
         return service.getByVendorId(vendorId)
                 .collectList()
@@ -120,10 +120,9 @@ public class ServiceController {
     }
 
 
-
     @PreAuthorize("hasAuthority('SERVICE_VIEW')")
     @GetMapping("/subVendors/{subVendorId}")
-    public Mono<ApiResponse<List<ServiceResponse>>> get(@PathVariable Long subVendorId) {
+    public Mono<ApiResponse<List<ServiceResponse>>> getBySubVendorId(@PathVariable Long subVendorId) {
 
         return service.getBySubVendorId(subVendorId)
                 .collectList()
@@ -134,7 +133,6 @@ public class ServiceController {
                         res
                 ));
     }
-
     // =====================================================
     // GET ALL SERVICES
     // =====================================================
