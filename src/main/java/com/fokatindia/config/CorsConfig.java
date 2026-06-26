@@ -25,7 +25,7 @@ public class CorsConfig {
                 // CUSTOM DOMAINS
                 "https://admin.fokatindia.com",
                 "https://fokatindia.com",
-                "https://www.fokatindia.com"
+                "https://partner.fokatindia.com"
         ));
 
         config.setAllowedHeaders(Arrays.asList("*"));
