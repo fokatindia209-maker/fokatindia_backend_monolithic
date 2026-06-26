@@ -119,6 +119,22 @@ public class ServiceController {
                 ));
     }
 
+
+
+    @PreAuthorize("hasAuthority('SERVICE_VIEW')")
+    @GetMapping("/subVendors/{subVendorId}")
+    public Mono<ApiResponse<List<ServiceResponse>>> get(@PathVariable Long subVendorId) {
+
+        return service.getBySubVendorId(subVendorId)
+                .collectList()
+                .map(res -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Services fetched successfully",
+                        res
+                ));
+    }
+
     // =====================================================
     // GET ALL SERVICES
     // =====================================================

@@ -26,4 +26,16 @@ public interface ServiceRepository
       AND s.active = true
 """)
     Flux<Service> findByVendorId(Long vendorId);
+
+
+    @Query("""
+    SELECT s.*
+    FROM service_categories s
+    INNER JOIN sub_vendor_services svs
+        ON svs.service_id = s.id
+    WHERE svs.sub_vendor_id = :subVendorId
+      AND vs.active = true
+      AND s.active = true
+""")
+    Flux<Service> findBySubVendorId(Long subVendorId);
 }

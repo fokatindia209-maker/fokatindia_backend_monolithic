@@ -354,6 +354,28 @@ public class ServiceSeriveImpl implements ServiceService {
     }
 
 
+
+
+    public Flux<ServiceResponse> getBySubVendorId(Long subVendorId) {
+
+        return repository.findBySubVendorId(subVendorId)
+
+                .flatMap(service ->
+
+                        categoryRepository.findById(
+                                        service.getCategoryId()
+                                )
+
+                                .map(category ->
+                                        mapToResponse(
+                                                service,
+                                                category
+                                        )
+                                )
+                );
+    }
+
+
     // =====================================================
     // MAPPER
     // =====================================================

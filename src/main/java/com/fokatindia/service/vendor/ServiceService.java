@@ -18,6 +18,6 @@ public interface ServiceService {
 
     Mono<Void> delete(Long id);
     Flux<ServiceResponse> getByVendorId(Long vendorId);
-
+    Flux<ServiceResponse> getBySubVendorId(Long subVendorId);
 
 }
