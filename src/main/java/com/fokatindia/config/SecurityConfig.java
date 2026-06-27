@@ -32,6 +32,7 @@ public class SecurityConfig {
 
                         .pathMatchers(
                                 "/restful/v1/api/admin/**",
+                                "/restful/v1/api/vendor/dashboard/**",
                                 "/restful/v1/api/users/**",
                                 "/restful/v1/api/role-permissions",
                                 "/restful/v1/api/permissions/**",
