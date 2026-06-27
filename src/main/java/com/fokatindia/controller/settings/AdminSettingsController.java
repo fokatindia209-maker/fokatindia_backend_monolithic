@@ -54,12 +54,10 @@ public class AdminSettingsController {
             @RequestBody ChangePasswordRequest request
     ) {
         return service.changePassword(request)
-                .map(msg -> new ApiResponse<>(
-                        "success", 200, msg, msg
-                ))
-                .onErrorResume(e -> Mono.just(new ApiResponse<>(
-                        "error", 400, e.getMessage(), (String) null, null
-                )));
+                .map(msg -> new ApiResponse<String>("success", 200, msg, msg, null))
+                .onErrorResume(e -> Mono.just(
+                        new ApiResponse<String>("error", 400, e.getMessage(), e.getMessage(), null)
+                ));
     }
 
     // =====================================================
