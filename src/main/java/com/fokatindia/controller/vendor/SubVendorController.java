@@ -140,6 +140,34 @@ public class SubVendorController {
     }
 
 
+    // =====================================================
+    // DEACTIVATE SUBVENDOR
+    // =====================================================
+
+    @PreAuthorize("hasAuthority('SUBVENDOR_CREATE')")
+    @PutMapping("/{id}/deactivate")
+    public Mono<ApiResponse<SubVendorResponse>> deactivate(
+            @PathVariable Long id
+    ) {
+        return service.getSubVendorBySubVendorId(id)
+                .flatMap(existing -> {
+                    SubVendorRequest req = new SubVendorRequest();
+                    req.setUserId(existing.getUserId());
+                    req.setVendorId(existing.getVendorId());
+                    req.setSpecialization(existing.getSpecialization());
+                    req.setLatitude(existing.getLatitude());
+                    req.setLongitude(existing.getLongitude());
+                    req.setServiceRadiusKm(existing.getServiceRadiusKm());
+                    req.setExperienceYears(existing.getExperienceYears());
+                    req.setAvailabilityStatus("INACTIVE");
+                    req.setRating(existing.getRating());
+                    return service.updateSubVendor(id, req);
+                })
+                .map(res -> new ApiResponse<>(
+                        "success", 200, "SubVendor deactivated successfully", res
+                ));
+    }
+
     @PreAuthorize("hasAuthority('SUBVENDOR_MANAGE')")
     @GetMapping
     public Mono<ApiResponse<List<SubVendorResponse>>> getAllSubVendors() {

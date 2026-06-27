@@ -198,6 +198,35 @@ public class ServiceController {
     }
 
     // =====================================================
+    // TOGGLE SERVICE ACTIVE STATUS
+    // =====================================================
+
+    @PreAuthorize("hasAuthority('SERVICE_UPDATE')")
+    @PutMapping("/{id}/status")
+    public Mono<ApiResponse<ServiceResponse>> toggleStatus(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, Boolean> body
+    ) {
+        return service.getById(id)
+                .flatMap(existing -> {
+                    ServiceRequest req = new ServiceRequest();
+                    req.setCategoryId(existing.getCategoryId());
+                    req.setName(existing.getName());
+                    req.setDescription(existing.getDescription());
+                    req.setPrice(existing.getPrice());
+                    req.setDiscountedPrice(existing.getDiscountedPrice());
+                    req.setDurationMinutes(existing.getDurationMinutes());
+                    req.setFeatured(existing.getFeatured());
+                    req.setActive(body.getOrDefault("active", !existing.getActive()));
+                    req.setServiceType(existing.getServiceType());
+                    return service.update(id, req);
+                })
+                .map(res -> new ApiResponse<>(
+                        "success", 200, "Service status updated successfully", res
+                ));
+    }
+
+    // =====================================================
     // DELETE SERVICE
     // =====================================================
 
