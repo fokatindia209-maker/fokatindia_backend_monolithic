@@ -8,6 +8,7 @@ import com.fokatindia.entity.Token;
 import com.fokatindia.entity.User;
 import com.fokatindia.entity.UserRole;
 import com.fokatindia.entity.vendor.SubVendor;
+import com.fokatindia.entity.vendor.Vendor;
 import com.fokatindia.repository.RoleRepository;
 import com.fokatindia.repository.TokenRepository;
 import com.fokatindia.repository.UserRepository;
@@ -130,9 +131,9 @@ public class UserServiceImpl implements UserService {
                                                         )
                                                 )
 
-                                                .flatMap(vendor ->
+                                                .flatMap(parentVendorUser ->
                                                         saveUserRole(user, role.getRoleId())
-                                                                .map(savedUser -> {
+                                                                .flatMap(savedUser -> {
 
                                                                     String token =
                                                                             jwtTokenProvider.generateToken(
@@ -141,13 +142,36 @@ public class UserServiceImpl implements UserService {
                                                                                     roleName
                                                                             );
 
-                                                                    return mapToResponse(savedUser, token, roleName);
+                                                                    return vendorRepository
+                                                                            .findByUserId(parentVendorUser.getUserId())
+                                                                            .switchIfEmpty(Mono.error(
+                                                                                    new RuntimeException("Parent vendor profile not found. Contact your vendor for a valid invitation code.")))
+                                                                            .flatMap(parentVendor -> {
+                                                                                SubVendor subVendor = new SubVendor();
+                                                                                subVendor.setUserId(savedUser.getUserId());
+                                                                                subVendor.setVendorId(parentVendor.getVendorId());
+                                                                                subVendor.setAvailabilityStatus("ACTIVE");
+                                                                                subVendor.setRating(0.0);
+                                                                                subVendor.setCreatedAt(LocalDateTime.now());
+
+                                                                                return subVendorRepository.save(subVendor)
+                                                                                        .map(savedSubVendor -> {
+                                                                                            UserResponse response = mapToResponse(savedUser, token, roleName);
+                                                                                            response.setVendorId(savedSubVendor.getVendorId());
+                                                                                            response.setSubVendorId(savedSubVendor.getSubVendorId());
+                                                                                            return response;
+                                                                                        });
+                                                                            })
+                                                                            .onErrorResume(err ->
+                                                                                    userRepository.delete(savedUser)
+                                                                                            .then(Mono.error(new RuntimeException(err.getMessage())))
+                                                                            );
                                                                 })
                                                 );
                                     }
 
                                     return saveUserRole(user, role.getRoleId())
-                                            .map(savedUser -> {
+                                            .flatMap(savedUser -> {
 
                                                 String token =
                                                         jwtTokenProvider.generateToken(
@@ -156,7 +180,27 @@ public class UserServiceImpl implements UserService {
                                                                 roleName
                                                         );
 
-                                                return mapToResponse(savedUser, token, roleName);
+                                                if ("VENDOR".equals(roleName)) {
+                                                    Vendor vendor = new Vendor();
+                                                    vendor.setUserId(savedUser.getUserId());
+                                                    vendor.setKycStatus("PENDING");
+                                                    vendor.setRating(0.0);
+                                                    vendor.setCreatedAt(LocalDateTime.now());
+
+                                                    return vendorRepository.save(vendor)
+                                                            .map(savedVendor -> {
+                                                                UserResponse response = mapToResponse(savedUser, token, roleName);
+                                                                response.setVendorId(savedVendor.getVendorId());
+                                                                return response;
+                                                            })
+                                                            .onErrorResume(err ->
+                                                                    userRepository.delete(savedUser)
+                                                                            .then(Mono.error(new RuntimeException(
+                                                                                    "Vendor profile creation failed: " + err.getMessage())))
+                                                            );
+                                                }
+
+                                                return Mono.just(mapToResponse(savedUser, token, roleName));
                                             });
                                 })
                 );
