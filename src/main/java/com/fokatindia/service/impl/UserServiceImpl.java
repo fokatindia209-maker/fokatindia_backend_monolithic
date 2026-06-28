@@ -20,6 +20,7 @@ import com.fokatindia.service.EmailService;
 import com.fokatindia.service.UserService;
 import com.fokatindia.service.vendor.DocumentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -66,7 +68,7 @@ public class UserServiceImpl implements UserService {
                         "Your account has been created successfully.\n\n" +
                         "You can now log in and start using FokatIndia.\n\n" +
                         "Regards,\nFokatIndia Team"
-                ).subscribe());
+                ).subscribe(null, err -> log.error("Failed to send welcome email to {}: {}", request.getEmail(), err.getMessage())));
     }
 
     // ================= VENDOR REGISTER =================
@@ -84,7 +86,7 @@ public class UserServiceImpl implements UserService {
                         "Share this code with your sub-vendors to let them join.\n\n" +
                         "Please complete your KYC to start receiving bookings.\n\n" +
                         "Regards,\nFokatIndia Team"
-                ).subscribe());
+                ).subscribe(null, err -> log.error("Failed to send welcome email to {}: {}", request.getEmail(), err.getMessage())));
     }
 
     // ================= SUB_VENDOR REGISTER =================
@@ -100,7 +102,7 @@ public class UserServiceImpl implements UserService {
                         "Your sub-vendor account has been created successfully.\n\n" +
                         "You can now log in and manage your assignments.\n\n" +
                         "Regards,\nFokatIndia Team"
-                ).subscribe());
+                ).subscribe(null, err -> log.error("Failed to send welcome email to {}: {}", request.getEmail(), err.getMessage())));
     }
 
     // ================= COMMON CORE LOGIC =================
@@ -478,7 +480,7 @@ public class UserServiceImpl implements UserService {
                             user.getEmail(),
                             "FokatIndia – Password Reset Request",
                             emailBody
-                    ).subscribe();
+                    ).subscribe(null, err -> log.error("Failed to send forgot-password email to {}: {}", user.getEmail(), err.getMessage()));
 
                     return Mono.just(response);
                 });
