@@ -131,4 +131,26 @@ public class VendorController {
                         )
                 );
     }
+
+    // =====================================================
+    // DEACTIVATE VENDOR
+    // =====================================================
+
+    @PreAuthorize("hasAuthority('VENDOR_MANAGE')")
+    @PutMapping("/{id}/deactivate")
+    public Mono<ApiResponse<VendorResponse>> deactivateVendor(@PathVariable Long id) {
+        return service.deactivateVendor(id)
+                .map(res -> new ApiResponse<>("success", 200, "Vendor deactivated successfully", res));
+    }
+
+    // =====================================================
+    // DELETE VENDOR
+    // =====================================================
+
+    @PreAuthorize("hasAuthority('VENDOR_MANAGE')")
+    @DeleteMapping("/{id}")
+    public Mono<ApiResponse<String>> deleteVendor(@PathVariable Long id) {
+        return service.deleteVendor(id)
+                .thenReturn(new ApiResponse<>("success", 200, "Vendor deleted successfully", "Deleted"));
+    }
 }

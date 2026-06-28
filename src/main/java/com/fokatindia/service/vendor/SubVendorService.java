@@ -15,4 +15,6 @@ public interface SubVendorService {
     Flux<SubVendorResponse> getSubVendorByServiceId(Long serviceId,   Double lat,
                                                     Double lng);
     Mono<SubVendorResponse> getSubVendorBySubVendorId(Long subVendorId);
+
+    Mono<Void> deleteSubVendor(Long id);
 }

@@ -25,6 +25,8 @@ public interface UserService {
 
 
     Mono<UserResponse> deactivateUser(Long id);
+
+    Mono<UserResponse> activateUser(Long id);
     Mono<List<String>> getPermissions(Long userId);
     Flux<UserResponse> getAllUsers();
 

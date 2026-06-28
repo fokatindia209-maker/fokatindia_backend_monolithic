@@ -93,4 +93,15 @@ public class UserController {
                         res
                 ));
     }
+
+    @PutMapping("/{userId}/activate")
+    public Mono<ApiResponse<UserResponse>> activate(@PathVariable Long userId) {
+        return userService.activateUser(userId)
+                .map(res -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "User activated",
+                        res
+                ));
+    }
 }

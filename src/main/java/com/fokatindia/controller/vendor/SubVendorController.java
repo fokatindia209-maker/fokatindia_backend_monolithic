@@ -183,4 +183,15 @@ public class SubVendorController {
                         )
                 );
     }
+
+    // =====================================================
+    // DELETE SUBVENDOR
+    // =====================================================
+
+    @PreAuthorize("hasAuthority('SUBVENDOR_MANAGE')")
+    @DeleteMapping("/{id}")
+    public Mono<ApiResponse<String>> deleteSubVendor(@PathVariable Long id) {
+        return service.deleteSubVendor(id)
+                .thenReturn(new ApiResponse<>("success", 200, "SubVendor deleted successfully", "Deleted"));
+    }
 }

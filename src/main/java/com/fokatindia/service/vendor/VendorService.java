@@ -13,4 +13,7 @@ public interface VendorService {
     Mono<VendorResponse> getVendorByUserId(Long userId);
     Flux<VendorResponse> getAllVendorsWithUserId();
 
+    Mono<Void> deleteVendor(Long id);
+
+    Mono<VendorResponse> deactivateVendor(Long id);
 }

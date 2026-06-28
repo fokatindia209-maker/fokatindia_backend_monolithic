@@ -519,6 +519,22 @@ public class UserServiceImpl implements UserService {
 //                .map(user -> mapToResponse(user, null));
     }
 
+    // ================= ACTIVATE USER =================
+
+    @Override
+    public Mono<UserResponse> activateUser(Long id) {
+        return userRepository.findById(id)
+                .switchIfEmpty(Mono.error(new RuntimeException("User not found")))
+                .flatMap(user -> {
+                    user.setStatus("ACTIVE");
+                    return userRepository.save(user);
+                })
+                .flatMap(user ->
+                        getRole(user.getUserId())
+                                .map(role -> mapToResponse(user, null, role))
+                );
+    }
+
     // ================= ENTITY MAPPER =================
 
     private User mapToEntity(RegisterRequest request) {

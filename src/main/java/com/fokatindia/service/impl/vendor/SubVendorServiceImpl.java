@@ -1,7 +1,6 @@
 package com.fokatindia.service.impl.vendor;
 
 
-import com.fokatindia.dto.vendor.CategoryResponse;
 import com.fokatindia.dto.vendor.SubVendorRequest;
 import com.fokatindia.dto.vendor.SubVendorResponse;
 import com.fokatindia.entity.vendor.SubVendor;
@@ -254,6 +253,13 @@ public class SubVendorServiceImpl implements SubVendorService {
     public Flux<SubVendorResponse> getAllSubVendors() {
         return subVendorRepository.findAll()
                 .flatMap(this::mapToResponse);
+    }
+
+    @Override
+    public Mono<Void> deleteSubVendor(Long id) {
+        return subVendorRepository.findById(id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("SubVendor not found")))
+                .flatMap(subVendorRepository::delete);
     }
 
 

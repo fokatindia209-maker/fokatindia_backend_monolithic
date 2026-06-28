@@ -165,6 +165,27 @@ public class VendorServiceImpl implements VendorService {
                 .flatMap(this::mapToResponse);
     }
 
+    @Override
+    public Mono<Void> deleteVendor(Long id) {
+        return vendorRepo.findById(id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Vendor not found")))
+                .flatMap(vendorRepo::delete);
+    }
+
+    @Override
+    public Mono<VendorResponse> deactivateVendor(Long id) {
+        return vendorRepo.findById(id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Vendor not found")))
+                .flatMap(vendor -> userRepository.findById(vendor.getUserId())
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException("User not found")))
+                        .flatMap(user -> {
+                            user.setStatus("DEACTIVE");
+                            return userRepository.save(user);
+                        })
+                        .thenReturn(vendor)
+                )
+                .flatMap(this::mapToResponse);
+    }
 
     // =====================================================
     // MAPPERS
