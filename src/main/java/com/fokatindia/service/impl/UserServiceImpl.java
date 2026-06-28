@@ -59,14 +59,14 @@ public class UserServiceImpl implements UserService {
     public Mono<UserResponse> registerUser(RegisterRequest request) {
 
         return createUserWithRole(request, "USER")
-                .flatMap(response -> emailService.sendEmail(
+                .doOnSuccess(response -> emailService.sendEmail(
                         request.getEmail(),
                         "Welcome to FokatIndia!",
                         "Hi " + request.getName() + ",\n\n" +
                         "Your account has been created successfully.\n\n" +
                         "You can now log in and start using FokatIndia.\n\n" +
                         "Regards,\nFokatIndia Team"
-                ).thenReturn(response));
+                ).subscribe());
     }
 
     // ================= VENDOR REGISTER =================
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     public Mono<UserResponse> registerVendor(RegisterRequest request) {
 
         return createUserWithRole(request, "VENDOR")
-                .flatMap(response -> emailService.sendEmail(
+                .doOnSuccess(response -> emailService.sendEmail(
                         request.getEmail(),
                         "Welcome to FokatIndia – Vendor Account Created!",
                         "Hi " + request.getName() + ",\n\n" +
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
                         "Share this code with your sub-vendors to let them join.\n\n" +
                         "Please complete your KYC to start receiving bookings.\n\n" +
                         "Regards,\nFokatIndia Team"
-                ).thenReturn(response));
+                ).subscribe());
     }
 
     // ================= SUB_VENDOR REGISTER =================
@@ -93,14 +93,14 @@ public class UserServiceImpl implements UserService {
     public Mono<UserResponse> registerSubVendor(RegisterRequest request) {
 
         return createUserWithRole(request, "SUB_VENDOR")
-                .flatMap(response -> emailService.sendEmail(
+                .doOnSuccess(response -> emailService.sendEmail(
                         request.getEmail(),
                         "Welcome to FokatIndia – Sub-Vendor Account Created!",
                         "Hi " + request.getName() + ",\n\n" +
                         "Your sub-vendor account has been created successfully.\n\n" +
                         "You can now log in and manage your assignments.\n\n" +
                         "Regards,\nFokatIndia Team"
-                ).thenReturn(response));
+                ).subscribe());
     }
 
     // ================= COMMON CORE LOGIC =================
@@ -474,11 +474,13 @@ public class UserServiceImpl implements UserService {
                             "Your account is safe.\n\n" +
                             "Regards,\nFokatIndia Team";
 
-                    return emailService.sendEmail(
+                    emailService.sendEmail(
                             user.getEmail(),
                             "FokatIndia – Password Reset Request",
                             emailBody
-                    ).thenReturn(response);
+                    ).subscribe();
+
+                    return Mono.just(response);
                 });
     }
 
