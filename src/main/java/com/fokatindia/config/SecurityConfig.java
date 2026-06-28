@@ -4,6 +4,7 @@ import com.fokatindia.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -29,6 +30,8 @@ public class SecurityConfig {
                 // ENABLE CORS
                 .cors(cors -> {})
                 .authorizeExchange(exchange -> exchange
+
+                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         .pathMatchers(
                                 "/restful/v1/api/admin/**",
