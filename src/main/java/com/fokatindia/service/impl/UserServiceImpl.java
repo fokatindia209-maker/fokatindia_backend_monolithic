@@ -466,7 +466,19 @@ public class UserServiceImpl implements UserService {
                                     "Reset link sent successfully"
                             );
 
-                    return Mono.just(response);
+                    String emailBody =
+                            "Hi " + user.getName() + ",\n\n" +
+                            "We received a request to reset your FokatIndia account password.\n\n" +
+                            "If you made this request, please contact support or use the app to reset your password.\n\n" +
+                            "If you did not request a password reset, please ignore this email. " +
+                            "Your account is safe.\n\n" +
+                            "Regards,\nFokatIndia Team";
+
+                    return emailService.sendEmail(
+                            user.getEmail(),
+                            "FokatIndia – Password Reset Request",
+                            emailBody
+                    ).thenReturn(response);
                 });
     }
 
