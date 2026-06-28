@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 public interface DocumentService {
     Mono<DocumentResponse> uploadDocument(DocumentUploadRequest request);
-    Mono<DocumentResponse> verifyDocument(Long id, String status);
+    Mono<DocumentResponse> verifyDocument(Long id, String status, String remarks);
     Flux<DocumentResponse> getUserDocuments(Long userId);
 
     Mono<String> getDocumentStatus(Long userId);

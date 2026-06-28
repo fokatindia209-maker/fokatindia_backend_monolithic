@@ -5,6 +5,7 @@ import com.fokatindia.dto.vendor.DocumentResponse;
 import com.fokatindia.dto.vendor.DocumentUploadRequest;
 import com.fokatindia.entity.vendor.Document;
 import com.fokatindia.exception.ResourceNotFoundException;
+import com.fokatindia.repository.UserRepository;
 import com.fokatindia.repository.vendor.DocumentRepository;
 import com.fokatindia.service.CloudinaryService;
 import com.fokatindia.service.vendor.DocumentService;
@@ -22,6 +23,8 @@ public class DocumentServiceImpl implements DocumentService {
     private final DocumentRepository documentRepo;
 
     private final CloudinaryService cloudinaryService;
+
+    private final UserRepository userRepository;
 
     // =====================================================
     // UPLOAD DOCUMENT
@@ -73,12 +76,11 @@ public class DocumentServiceImpl implements DocumentService {
     // VERIFY DOCUMENT
     // =====================================================
 
-
-
     @Override
     public Mono<DocumentResponse> verifyDocument(
             Long documentId,
-            String status
+            String status,
+            String remarks
     ) {
 
         return documentRepo.findById(documentId)
@@ -94,16 +96,24 @@ public class DocumentServiceImpl implements DocumentService {
                 .flatMap(document -> {
 
                     document.setStatus(status);
+                    document.setVerifiedAt(LocalDateTime.now());
 
-                    document.setVerifiedAt(
-                            LocalDateTime.now()
-                    );
+                    if (remarks != null && !remarks.isBlank()) {
+                        document.setRemarks(remarks);
+                    }
 
-                    return documentRepo.save(
-                                    document
-                            )
-
-                            .map(this::mapResponse);
+                    return documentRepo.save(document)
+                            .flatMap(savedDoc ->
+                                    getDocumentStatus(savedDoc.getUserId())
+                                            .flatMap(overallStatus ->
+                                                    userRepository.findById(savedDoc.getUserId())
+                                                            .flatMap(user -> {
+                                                                user.setDocumentStatus(overallStatus);
+                                                                return userRepository.save(user);
+                                                            })
+                                            )
+                                            .thenReturn(mapResponse(savedDoc))
+                            );
                 });
     }
 
@@ -120,14 +130,15 @@ public class DocumentServiceImpl implements DocumentService {
                         return "PENDING";
                     }
 
-                    boolean allApproved = documents.stream()
-                            .allMatch(doc ->
-                                    "APPROVED".equalsIgnoreCase(doc.getStatus())
-                            );
+                    boolean anyRejected = documents.stream()
+                            .anyMatch(doc -> "REJECTED".equalsIgnoreCase(doc.getStatus()));
 
-                    return allApproved
-                            ? "APPROVED"
-                            : "PENDING";
+                    if (anyRejected) return "REJECTED";
+
+                    boolean allApproved = documents.stream()
+                            .allMatch(doc -> "APPROVED".equalsIgnoreCase(doc.getStatus()));
+
+                    return allApproved ? "APPROVED" : "SUBMITTED";
                 });
     }
 

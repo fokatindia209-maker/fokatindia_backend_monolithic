@@ -66,10 +66,11 @@ public class DocumentController {
     @PutMapping("/{id}/verify")
     public Mono<ApiResponse<DocumentResponse>> verify(
             @PathVariable Long id,
-            @RequestParam String status
+            @RequestParam String status,
+            @RequestParam(required = false) String remarks
     ) {
 
-        return service.verifyDocument(id, status)
+        return service.verifyDocument(id, status, remarks)
                 .map(res ->
                         new ApiResponse<>(
                                 "success",
