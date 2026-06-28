@@ -6,6 +6,18 @@ spring:
   application:
     name: fokatindia
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: fokatindia209@gmail.com
+    password: ypzv xjpz jzzb gbpw
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   main:
     web-application-type: reactive
 

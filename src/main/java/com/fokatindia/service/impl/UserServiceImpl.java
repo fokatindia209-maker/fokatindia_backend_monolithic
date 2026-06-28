@@ -16,6 +16,7 @@ import com.fokatindia.repository.UserRoleRepository;
 import com.fokatindia.repository.vendor.SubVendorRepository;
 import com.fokatindia.repository.vendor.VendorRepository;
 import com.fokatindia.security.JwtTokenProvider;
+import com.fokatindia.service.EmailService;
 import com.fokatindia.service.UserService;
 import com.fokatindia.service.vendor.DocumentService;
 import lombok.RequiredArgsConstructor;
@@ -50,13 +51,22 @@ public class UserServiceImpl implements UserService {
 
 
     private final DocumentService documentService;
+    private final EmailService emailService;
 
     // ================= USER REGISTER =================
 
     @Override
     public Mono<UserResponse> registerUser(RegisterRequest request) {
 
-        return createUserWithRole(request, "USER");
+        return createUserWithRole(request, "USER")
+                .flatMap(response -> emailService.sendEmail(
+                        request.getEmail(),
+                        "Welcome to FokatIndia!",
+                        "Hi " + request.getName() + ",\n\n" +
+                        "Your account has been created successfully.\n\n" +
+                        "You can now log in and start using FokatIndia.\n\n" +
+                        "Regards,\nFokatIndia Team"
+                ).thenReturn(response));
     }
 
     // ================= VENDOR REGISTER =================
@@ -64,7 +74,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<UserResponse> registerVendor(RegisterRequest request) {
 
-        return createUserWithRole(request, "VENDOR");
+        return createUserWithRole(request, "VENDOR")
+                .flatMap(response -> emailService.sendEmail(
+                        request.getEmail(),
+                        "Welcome to FokatIndia – Vendor Account Created!",
+                        "Hi " + request.getName() + ",\n\n" +
+                        "Your vendor account has been created successfully.\n\n" +
+                        "Your Invitation Code: " + response.getInvitationCode() + "\n" +
+                        "Share this code with your sub-vendors to let them join.\n\n" +
+                        "Please complete your KYC to start receiving bookings.\n\n" +
+                        "Regards,\nFokatIndia Team"
+                ).thenReturn(response));
     }
 
     // ================= SUB_VENDOR REGISTER =================
@@ -72,7 +92,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<UserResponse> registerSubVendor(RegisterRequest request) {
 
-        return createUserWithRole(request, "SUB_VENDOR");
+        return createUserWithRole(request, "SUB_VENDOR")
+                .flatMap(response -> emailService.sendEmail(
+                        request.getEmail(),
+                        "Welcome to FokatIndia – Sub-Vendor Account Created!",
+                        "Hi " + request.getName() + ",\n\n" +
+                        "Your sub-vendor account has been created successfully.\n\n" +
+                        "You can now log in and manage your assignments.\n\n" +
+                        "Regards,\nFokatIndia Team"
+                ).thenReturn(response));
     }
 
     // ================= COMMON CORE LOGIC =================
