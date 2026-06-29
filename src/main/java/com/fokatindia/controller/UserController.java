@@ -2,6 +2,7 @@ package com.fokatindia.controller;
 
 import com.fokatindia.dto.*;
 import com.fokatindia.service.UserService;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -37,6 +38,17 @@ public class UserController {
     @PostMapping("/login")
     public Mono<ApiResponse<UserResponse>> login(@RequestBody LoginRequest request) {
         return userService.login(request)
+                .map(res -> new ApiResponse<>(
+                        "success",
+                        200,
+                        "Login successful",
+                        res
+                ));
+    }
+
+    @PostMapping("/phone-login")
+    public Mono<ApiResponse<UserResponse>> phoneLogin(@RequestBody PhoneLoginRequest request) {
+        return userService.phoneLogin(request)
                 .map(res -> new ApiResponse<>(
                         "success",
                         200,

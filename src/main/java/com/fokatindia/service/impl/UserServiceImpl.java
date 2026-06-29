@@ -2,6 +2,7 @@ package com.fokatindia.service.impl;
 
 import com.fokatindia.dto.ForgetPasswordResponse;
 import com.fokatindia.dto.LoginRequest;
+import com.fokatindia.dto.PhoneLoginRequest;
 import com.fokatindia.dto.RegisterRequest;
 import com.fokatindia.dto.UserResponse;
 import com.fokatindia.entity.Token;
@@ -415,6 +416,76 @@ public class UserServiceImpl implements UserService {
 
                                                                         return response;
                                                                     });
+                                                        });
+                                            })
+                            );
+                });
+    }
+
+    // ================= PHONE LOGIN (after Firebase OTP) =================
+
+    @Override
+    public Mono<UserResponse> phoneLogin(PhoneLoginRequest request) {
+
+        return userRepository.findByPhone(request.getPhone())
+
+                .switchIfEmpty(
+                        Mono.error(new RuntimeException("No account found for this number"))
+                )
+
+                .flatMap(user -> {
+
+                    if ("DEACTIVE".equalsIgnoreCase(user.getStatus())) {
+                        return Mono.error(
+                                new RuntimeException("Your account is deactivated. Contact support.")
+                        );
+                    }
+
+                    return roleRepository.findRoleNameByUserId(user.getUserId())
+
+                            .defaultIfEmpty("USER")
+
+                            .flatMap(role ->
+
+                                    documentService
+                                            .getDocumentStatus(user.getUserId())
+
+                                            .defaultIfEmpty("PENDING")
+
+                                            .flatMap(documentStatus -> {
+
+                                                String jwtToken =
+                                                        jwtTokenProvider.generateToken(
+                                                                user.getUserId(),
+                                                                user.getPhone(),
+                                                                role
+                                                        );
+
+                                                return tokenRepository.findByUserId(user.getUserId())
+
+                                                        .flatMap(existingToken -> {
+                                                            existingToken.setJwtToken(jwtToken);
+                                                            existingToken.setFcmToken(request.getFcmToken());
+                                                            return tokenRepository.save(existingToken);
+                                                        })
+
+                                                        .switchIfEmpty(
+                                                                tokenRepository.save(
+                                                                        createToken(
+                                                                                user.getUserId(),
+                                                                                jwtToken,
+                                                                                request.getFcmToken()
+                                                                        )
+                                                                )
+                                                        )
+
+                                                        .map(savedToken -> {
+                                                            UserResponse response =
+                                                                    mapToResponse(user, jwtToken, role);
+                                                            response.setDocumentStatus(documentStatus);
+                                                            response.setInvitationCode(user.getInvitationCode());
+                                                            response.setRole(role);
+                                                            return response;
                                                         });
                                             })
                             );
