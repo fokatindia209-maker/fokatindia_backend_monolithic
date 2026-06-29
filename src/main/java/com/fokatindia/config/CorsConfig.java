@@ -23,6 +23,9 @@ public class CorsConfig {
 
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
+                // Capacitor Android WebView origins
+                "https://localhost",
+                "capacitor://localhost",
                 "https://fokatindia-admin-1d8cf.web.app",
                 "https://fokatindia-user-11e15.web.app",
                 // CUSTOM DOMAINS
